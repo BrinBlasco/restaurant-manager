@@ -1,0 +1,398 @@
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 0;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modalContent {
+    background-color: var(--surface-color);
+    color: var(--text-on-surface);
+    width: 100%;
+    height: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+    gap: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--secondary-text-color);
+    padding: 5px;
+    transition: color 0.2s ease;
+    z-index: 10;
+}
+
+.closeButton:hover {
+    color: var(--text-on-surface);
+}
+
+.modalContent h1 {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 1.8rem;
+    padding-right: 30px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.formGroup label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+}
+
+.tableInput,
+.searchInput,
+.itemNoteInput {
+    padding: 10px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    color: var(--text-on-surface);
+
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tableInput::placeholder,
+.searchInput::placeholder,
+.itemNoteInput::placeholder {
+    color: var(--secondary-text-color);
+    opacity: 0.7;
+}
+
+.tableInput:focus,
+.searchInput:focus,
+.itemNoteInput:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb, 187, 134, 252), 0.3);
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.searchResults {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    max-height: 180px;
+    overflow-y: auto;
+    margin-top: 0;
+    background-color: var(--surface-color);
+}
+
+.menuItemResult {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 10px;
+    transition: background-color 0.15s ease;
+}
+
+.menuItemResult:last-child {
+    border-bottom: none;
+}
+
+.menuItemResult:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.menuItemInfo {
+    flex-grow: 1;
+    font-size: 0.95rem;
+    color: var(--text-on-surface);
+}
+
+.quickAddButton {
+    padding: 6px 14px;
+    background-color: var(--secondary-color);
+    color: var(--text-on-secondary);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    color: black !important;
+}
+
+.quickAddButton:hover {
+    background-color: rgba(3, 218, 197, 0.8);
+}
+
+.noResultsText {
+    padding: 15px;
+    text-align: center;
+    color: var(--secondary-text-color);
+}
+
+.currentOrderSection {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100px;
+    overflow: hidden;
+}
+
+.currentOrderSection h2 {
+    margin: 1rem 0;
+    color: var(--primary-color);
+    padding-bottom: 8px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.currentOrderList {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 5px 5px 5px 0;
+    margin-right: -5px;
+}
+
+.selectedItemCard {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 10px 12px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 10px;
+}
+
+.selectedItemDetails {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.selectedItemName {
+    font-weight: 500;
+    color: var(--text-on-surface);
+}
+
+.itemNoteInput {
+    font-size: 0.9rem;
+    padding: 6px 8px;
+}
+
+.itemControls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 5px;
+    flex-shrink: 0;
+}
+
+.quantity {
+    display: flex;
+    bottom: 10px;
+    right: 12px;
+    gap: 6px;
+
+}
+
+.quantityLabel {
+    font-size: 0.85rem;
+    color: var(--secondary-text-color);
+}
+
+.quantityInput {
+    width: 55px;
+    padding: 6px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    font-size: 1rem;
+    text-align: center;
+    color: var(--text-on-surface);
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.quantityInput::-webkit-outer-spin-button,
+.quantityInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.removeItemButton {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    padding: 4px 8px;
+    background-color: transparent;
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    margin-bottom: 18px;
+}
+
+.removeItemButton:hover {
+    background-color: var(--error-color);
+    color: var(--text-on-error);
+}
+
+.noItemsText {
+    padding: 15px;
+    text-align: center;
+    color: var(--secondary-text-color);
+    font-style: italic;
+}
+
+.tableNumberGroup {
+    display: flex;
+    padding: 15px 0;
+    flex-direction: row;
+}
+
+.tableInput {
+    width: 20%;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.modalButton {
+    flex-grow: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+    text-align: center;
+}
+
+.modalButton:active {
+    transform: scale(0.98);
+}
+
+.discardButton {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--secondary-text-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.discardButton:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.submitButton {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+.submitButton:hover {
+    background-color: rgba(187, 134, 252, 0.85);
+}
+
+.submitButton:disabled {
+    background-color: rgba(187, 134, 252, 0.4);
+    color: rgba(0, 0, 0, 0.5);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .modalOverlay {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modalContent {
+        max-width: 98%;
+        max-height: 98%;
+        height: 100%;
+        width: 100%;
+        border-radius: 1rem;
+        box-shadow: none;
+        border: none;
+        padding: 15px;
+        padding-top: 50px;
+        gap: 12px;
+    }
+
+    .closeButton {
+        top: 15px;
+
+        right: 15px;
+        color: var(--text-on-surface);
+    }
+
+    .modalContent h2 {
+        font-size: 1.3rem;
+
+        margin-bottom: 8px;
+    }
+
+    .searchResults {
+        max-height: 150px;
+    }
+
+    .modalActions {
+        padding-top: 12px;
+    }
+
+    .modalButton {
+        padding: 14px 15px;
+        font-size: 0.95rem;
+    }
+}

@@ -1,0 +1,60 @@
+.main {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.main input {
+    padding: 0.5rem;
+}
+
+.main h1 {
+    text-align: center;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+    font-size: 1.75rem;
+}
+
+.main .wrapper {
+    background-color: var(--surface-color);
+    padding: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-radius: 1rem;
+}
+
+.main form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.main form .formField {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.main .backButton {
+    padding: 1rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-weight: 500;
+    scale: 1.5;
+    cursor: pointer;
+}
+
+
+@media screen and (max-width: 769px) {
+    .main {
+        display: block;
+        margin: 0.5rem;
+    }
+
+    .backButton {
+        top: 1.8rem !important;
+        left: 0.5rem !important;
+    }
+}

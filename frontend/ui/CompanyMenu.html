@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4CAF50;
+            padding: 10px 20px;
+        }
+        .navbar .logo {
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+        .navbar .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        .navbar .nav-links a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+        }
+        .container {
+            display: flex;
+            padding: 20px;
+        }
+        .menu-list {
+            flex: 1;
+            margin-right: 20px;
+        }
+        .menu-item {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            cursor: pointer;
+        }
+        .menu-item h3 {
+            margin: 0 0 10px;
+        }
+        .menu-item button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .menu-form {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .menu-form .image-square {
+            width: 100px;
+            height: 100px;
+            background-color: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .menu-form .image-square img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .menu-form .image-square input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .menu-form .image-square svg {
+            fill: #aaa;
+            width: 30px;
+            height: 30px;
+        }
+        .menu-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .menu-form input, .menu-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .menu-form button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .overlay-form {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .overlay-form.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .overlay-form .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .overlay-form .form-container img {
+            align-self: center;
+            margin-bottom: 10px;
+        }
+        .overlay-form .form-container input[type="file"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .overlay-form .form-container button {
+            align-self: flex-end;
+        }
+        .section-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">Restaurant Logo</div>
+        <div class="nav-links">
+            <a href="#">Employees</a>
+            <a href="#">Roles</a>
+            <a href="#" style="background-color: #3e8e41; padding: 5px 10px; border-radius: 5px;">Menu</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="menu-list">
+            <div class="section-header">Menu Items</div>
+            <!-- Menu items will be dynamically added here -->
+        </div>
+
+        <div class="menu-form">
+            <div class="section-header">Add Menu Item</div>
+            <div class="image-square" id="new-image-container">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7V5h10v14z"/><path d="M16 13l-3.5-3.5L12 11l-1.5-1.5L8 11l-1.5 1.5L12 16l4-4zM12 11c.83 0 1.5-.67 1.5-1.5S12.83 8 12 8s-1.5.67-1.5 1.5S11.17 11 12 11z"/></svg>
+                <input type="file" id="new-image" accept="image/*">
+            </div>
+            <label for="new-name">Name:</label>
+            <input type="text" id="new-name" placeholder="Enter menu item name">
+
+            <label for="new-ingredients">Ingredients:</label>
+            <textarea style="resize: vertical; overflow: auto;" id="new-ingredients" rows="3" placeholder="List ingredients"></textarea>
+
+            <label for="new-recipe">Recipe:</label>
+            <textarea style="resize: vertical; overflow: auto;" id="new-recipe" rows="5" placeholder="Describe the recipe"></textarea>
+
+            <label for="new-price">Price:</label>
+            <input type="number" id="new-price" placeholder="Enter price">
+
+            <label for="new-description">Description:</label>
+            <textarea style="resize: vertical; overflow: auto;" id="new-description" rows="3" placeholder="Add a description"></textarea>
+
+            <button id="add-btn">Add Menu Item</button>
+        </div>
+    </div>
+
+    <!-- Overlay Form -->
+    <div class="overlay-form">
+        <div class="form-container">
+            <img id="preview-image" src="https://via.placeholder.com/100" alt="Menu Item Preview">
+            <label for="edit-image">Upload Image:</label>
+            <input type="file" id="edit-image" accept="image/*">
+
+            <label for="edit-name">Name:</label>
+            <input type="text" id="edit-name" placeholder="Enter menu item name">
+
+            <label for="edit-ingredients">Ingredients:</label>
+            <textarea id="edit-ingredients" rows="3" placeholder="List ingredients"></textarea>
+
+            <label for="edit-recipe">Recipe:</label>
+            <textarea id="edit-recipe" rows="5" placeholder="Describe the recipe"></textarea>
+
+            <label for="edit-price">Price:</label>
+            <input type="number" id="edit-price" placeholder="Enter price">
+
+            <label for="edit-description">Description:</label>
+            <textarea id="edit-description" rows="3" placeholder="Add a description"></textarea>
+
+            <button id="save-edit-btn">Save</button>
+            <button id="cancel-edit-btn">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const menuList = document.querySelector('.menu-list');
+        const addBtn = document.getElementById('add-btn');
+        const overlayForm = document.querySelector('.overlay-form');
+        const saveEditBtn = document.getElementById('save-edit-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+
+        let editingItem = null;
+
+        // Function to create a menu item element
+        function createMenuItem(data) {
+            const menuItem = document.createElement('div');
+            menuItem.classList.add('menu-item');
+            menuItem.dataset.name = data.name;
+            menuItem.dataset.ingredients = data.ingredients;
+            menuItem.dataset.recipe = data.recipe;
+            menuItem.dataset.price = data.price;
+            menuItem.dataset.description = data.description;
+
+            menuItem.innerHTML = `
+                <h3>${data.name}</h3>
+                <p>Description: ${data.description}</p>
+                <button class="edit-btn">Edit</button>
+            `;
+
+            return menuItem;
+        }
+
+        // Add new menu item
+        addBtn.addEventListener('click', () => {
+            const name = document.getElementById('new-name').value.trim();
+            const ingredients = document.getElementById('new-ingredients').value.trim();
+            const recipe = document.getElementById('new-recipe').value.trim();
+            const price = document.getElementById('new-price').value.trim();
+            const description = document.getElementById('new-description').value.trim();
+
+            if (name && ingredients && recipe && price && description) {
+                const newItem = createMenuItem({
+                    name,
+                    ingredients,
+                    recipe,
+                    price,
+                    description
+                });
+                menuList.appendChild(newItem);
+
+                // Clear form fields
+                document.getElementById('new-name').value = '';
+                document.getElementById('new-ingredients').value = '';
+                document.getElementById('new-recipe').value = '';
+                document.getElementById('new-price').value = '';
+                document.getElementById('new-description').value = '';
+
+                // Reset image preview
+                document.getElementById('new-image-container').innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7V5h10v14z"/><path d="M16 13l-3.5-3.5L12 11l-1.5-1.5L8 11l-1.5 1.5L12 16l4-4zM12 11c.83 0 1.5-.67 1.5-1.5S12.83 8 12 8s-1.5.67-1.5 1.5S11.17 11 12 11z"/></svg>
+                    <input type="file" id="new-image" accept="image/*">
+                `;
+
+                // Add edit functionality to the new item
+                newItem.querySelector('.edit-btn').addEventListener('click', () => {
+                    openEditForm(newItem);
+                });
+            } else {
+                alert('Please fill out all fields.');
+            }
+        });
+
+        // Open edit form
+        function openEditForm(item) {
+            editingItem = item;
+
+            const name = item.dataset.name;
+            const ingredients = item.dataset.ingredients;
+            const recipe = item.dataset.recipe;
+            const price = item.dataset.price;
+            const description = item.dataset.description;
+
+            // Populate the overlay form fields
+            document.getElementById('edit-name').value = name;
+            document.getElementById('edit-ingredients').value = ingredients;
+            document.getElementById('edit-recipe').value = recipe;
+            document.getElementById('edit-price').value = price;
+            document.getElementById('edit-description').value = description;
+
+            // Show the overlay form
+            overlayForm.classList.add('active');
+        }
+
+        // Save edited menu item
+        saveEditBtn.addEventListener('click', () => {
+            if (editingItem) {
+                const name = document.getElementById('edit-name').value.trim();
+                const ingredients = document.getElementById('edit-ingredients').value.trim();
+                const recipe = document.getElementById('edit-recipe').value.trim();
+                const price = document.getElementById('edit-price').value.trim();
+                const description = document.getElementById('edit-description').value.trim();
+
+                if (name && ingredients && recipe && price && description) {
+                    editingItem.dataset.name = name;
+                    editingItem.dataset.ingredients = ingredients;
+                    editingItem.dataset.recipe = recipe;
+                    editingItem.dataset.price = price;
+                    editingItem.dataset.description = description;
+
+                    editingItem.querySelector('h3').textContent = name;
+                    editingItem.querySelector('p').textContent = `Description: ${description}`;
+
+                    editingItem = null;
+                } else {
+                    alert('Please fill out all fields.');
+                }
+            }
+
+            // Hide the overlay form
+            overlayForm.classList.remove('active');
+        });
+
+        // Cancel editing
+        cancelEditBtn.addEventListener('click', () => {
+            editingItem = null;
+            overlayForm.classList.remove('active');
+        });
+
+        // Handle image preview for new menu item
+        const newImageInput = document.getElementById('new-image');
+        const newImageContainer = document.getElementById('new-image-container');
+
+        newImageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    newImageContainer.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle image preview for edit form
+        const editImageInput = document.getElementById('edit-image');
+        const previewImage = document.getElementById('preview-image');
+
+        editImageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

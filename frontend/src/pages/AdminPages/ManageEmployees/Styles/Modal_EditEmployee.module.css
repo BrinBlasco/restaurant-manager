@@ -1,0 +1,138 @@
+.cover {
+    position: fixed;
+    height: 100vh;
+    width: 100%;
+    top: 0rem;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 11;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapper {
+    width: 60%;
+    background-color: var(--surface-color);
+    padding: 2rem;
+    border-radius: 1rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.exit {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    line-height: 1.8;
+    cursor: pointer;
+    padding: 1rem;
+}
+
+.main {
+    display: flex;
+    flex: 1;
+    margin-top: 1rem;
+}
+
+.left,
+.right {
+    width: 50%;
+}
+
+.left {
+    padding-right: 1rem;
+}
+.right {
+    padding-left: 1rem;
+}
+
+.buttons {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.left form,
+.right form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-sizing: border-box;
+}
+.formField {
+    display: flex;
+    flex-direction: column;
+}
+
+.formFieldInline {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.formField input,
+.formFieldInline input {
+    padding: 0.2rem;
+}
+
+.formFieldInline .formField:first-child {
+    width: calc(50% - 0.25rem);
+}
+.formFieldInline .formField:last-child {
+    width: calc(50% - 0.25rem);
+}
+
+.left form label {
+    color: #898989;
+}
+
+.addRole {
+    width: 2rem;
+    height: 2rem;
+    background-color: #3b3b3b;
+    place-content: center;
+    text-align: center;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 1024px) {
+    .main {
+        flex-direction: column;
+    }
+    .left,
+    .right {
+        padding: 0;
+        width: 100%;
+    }
+    .right {
+        margin-top: 1rem;
+    }
+    .right form,
+    .left form {
+        flex: 1;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .wrapper {
+        margin-top: 4rem;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .wrapper {
+        width: 96%;
+        margin-top: 3%;
+    }
+}
+@media screen and (max-width: 375px) {
+    .wrapper {
+        width: 96%;
+        margin-top: 3%;
+    }
+    .left,
+    .right {
+        display: block;
+    }
+}

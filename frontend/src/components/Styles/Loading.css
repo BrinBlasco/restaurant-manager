@@ -1,0 +1,52 @@
+.main--Loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+}
+
+.main--Loading .box {
+    position: absolute;
+    width: 7rem;
+    height: 7rem;
+    top: 48%;
+    left: 48%;
+    margin: -3.1rem 0 0 -3.1rem;
+    border-top: 3px solid #32afa9;
+    border-radius: 50%;
+    animation: rotate 2s infinite linear;
+}
+
+.main--Loading .box::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-top: 3px solid var(--error-color);
+    border-radius: 50%;
+    animation: rotate 2s infinite linear;
+}
+
+.main--Loading .box::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    right: 12px;
+    bottom: 12px;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: rotate 1s infinite linear;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,88 @@
+.container {
+    font-family: Arial, sans-serif;
+}
+
+.roleContainer {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    min-height: fit-content;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.roleChip {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    margin: 2px 0;
+    cursor: pointer;
+    transition: opacity 0.2s ease-in-out;
+    font-size: 0.9em;
+}
+
+.roleChip:hover {
+    opacity: 0.85;
+}
+
+.addRoleBtn {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 10px 10px;
+    border-radius: 24px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.3s;
+    font-size: 1em;
+    gap: 8px;
+}
+
+.addRoleBtn:hover {
+    background-color: #9a67ea;
+}
+
+.addRoleBtn svg {
+    stroke: currentColor;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdownContent {
+    position: absolute;
+    background-color: var(--surface-color);
+    min-width: 160px;
+    border-radius: 8px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    margin-top: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.dropdownItem {
+    color: var(--main-text-color);
+    padding: 10px 16px;
+    display: block;
+    transition: background-color 0.2s ease-in-out;
+    cursor: pointer;
+    font-size: 0.95em;
+}
+
+.dropdownItem:hover {
+    background-color: var(--secondary-color);
+    color: var(--main-bg-color);
+}
+
+.dropdownItem.disabled {
+    color: var(--secondary-text-color);
+    cursor: default;
+    background-color: var(--surface-color);
+}
