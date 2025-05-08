@@ -17,7 +17,6 @@ app.use(
     cors({
         credentials: true,
         origin: process.env.SITE_URI,
-        //origin: "https://brinblazko.ddns.net",
     })
 );
 
