@@ -46,6 +46,7 @@ const OrderRoutes = require("./routes/ManageCompany/Orders");
 
 const CompanyRoutes = require("./routes/ManageCompany/Company");
 const UserRoutes = require("./routes/User");
+const { path } = require("./models/Schemas/AddressSchema");
 
 const io = initSocketServer(server);
 app.set("socketio", io);
@@ -59,6 +60,9 @@ app.use("/api/company/:companyId/employees", EmployeesRoutes);
 app.use("/api/company/:companyId/orders", OrderRoutes);
 
 app.use(express.static("public"));
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 const PORT = process.env.PORT || 5000;
 //server.listen(PORT, "127.0.0.1", () => console.log(`Server running on port ${PORT}`));
 server.listen(PORT, "0.0.0.0", () => console.log(`Server running on port ${PORT}`));
