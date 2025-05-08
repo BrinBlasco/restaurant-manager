@@ -7,7 +7,7 @@ import s from "./Styles/AuthPage.module.css";
 
 import { useAuth } from "@utils/Auth/AuthContext";
 
-const AuthPage = () => {
+const AuthPage = ({ login }) => {
     const { loading } = useAuth();
     const [isLogin, setIsLogin] = useState(true);
 

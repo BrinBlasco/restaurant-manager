@@ -16,16 +16,15 @@ import ChangeAccountDataPage from "@pages/Dashboard/ChangeAccountData/Page_Chang
 
 import WaiterPage from "@pages/Waiter/Page_Waiter";
 import KitchenPage from "@pages/Kitchen/Page_Kitchen";
-import TestPage from "./TEST/react/TestPage";
 
 const App = () => {
     return (
         <Router>
             <AuthProvider>
                 <Routes>
-                    <Route path="/test" element={<TestPage />} />
-                    <Route path="/" element={<AuthPage />} />
-                    <Route path="/login" element={<AuthPage />} />
+                    <Route path="/" element={<AuthPage login={true} />} />
+                    <Route path="/login" element={<AuthPage login={true} />} />
+                    <Route path="/login" element={<AuthPage login={false} />} />
 
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/dashboard/changeAccountData" element={<ChangeAccountDataPage />} />
