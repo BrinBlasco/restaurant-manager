@@ -16,7 +16,8 @@ const server = http.createServer(app);
 app.use(
     cors({
         credentials: true,
-        origin: "https://brinblazko.ddns.net",
+        origin: process.env.SITE_URI,
+        //origin: "https://brinblazko.ddns.net",
         //origin: ["http://localhost:9999", "https://brinblazko.ddns.net"],
     })
 );

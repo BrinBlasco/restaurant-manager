@@ -4,8 +4,8 @@ const socketAuthMiddleware = require("./socketAuthMiddleware");
 const initSocketServer = (httpServer) => {
     const io = new Server(httpServer, {
         cors: {
-            origin: "https://brinblazko.ddns.net",
-
+            origin: process.env.SITE_URI,
+            //origin: "https://brinblazko.ddns.net",
             methods: ["GET", "POST"],
             credentials: true,
         },
