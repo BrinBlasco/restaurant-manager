@@ -6,7 +6,8 @@ import PropTypes from "prop-types";
 import { SocketContext } from "./SocketContext";
 import { useAuth } from "@utils/Auth/AuthContext";
 
-const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL;
+//const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL;
+const SOCKET_SERVER_URL = "https://restaurant-manager-br3s.onrender.com";
 //"https://brinblazko.ddns.net";
 
 export const SocketProvider = ({ children }) => {
