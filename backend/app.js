@@ -18,7 +18,6 @@ app.use(
         credentials: true,
         origin: process.env.SITE_URI,
         //origin: "https://brinblazko.ddns.net",
-        //origin: ["http://localhost:9999", "https://brinblazko.ddns.net"],
     })
 );
 
