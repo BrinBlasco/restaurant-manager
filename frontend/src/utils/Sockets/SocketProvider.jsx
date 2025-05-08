@@ -1,4 +1,3 @@
-// --- START OF FILE SocketProvider.jsx --- (REVISED AGAIN TO FIX LOOP)
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import io from "socket.io-client";
 import PropTypes from "prop-types";
@@ -6,20 +5,15 @@ import PropTypes from "prop-types";
 import { SocketContext } from "./SocketContext";
 import { useAuth } from "@utils/Auth/AuthContext";
 
-//const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL;
-const SOCKET_SERVER_URL = "https://restaurant-manager-br3s.onrender.com";
-//"https://brinblazko.ddns.net";
+const SOCKET_SERVER_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const SocketProvider = ({ children }) => {
     const { currentCompany, isAuthenticated, loading: authLoading } = useAuth();
-    // Use useRef for the socket instance to prevent it from triggering useEffect changes directly
     const socketRef = useRef(null);
     const [isConnected, setIsConnected] = useState(false);
     const [error, setError] = useState(null);
-    const intendedCompanyIdRef = useRef(null); // Tracks the company the current socketRef is for
+    const intendedCompanyIdRef = useRef(null);
 
-    // --- Stable function references using useRef for setters ---
-    // This avoids adding setters to useCallback dependencies later
     const setIsConnectedRef = useRef(setIsConnected);
     const setErrorRef = useRef(setError);
     useEffect(() => {
