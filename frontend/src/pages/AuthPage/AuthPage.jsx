@@ -7,9 +7,9 @@ import s from "./Styles/AuthPage.module.css";
 
 import { useAuth } from "@utils/Auth/AuthContext";
 
-const AuthPage = ({ login }) => {
+const AuthPage = ({ isLoginOrRegister }) => {
     const { loading } = useAuth();
-    const [isLogin, setIsLogin] = useState(true);
+    const [isLogin, setIsLogin] = useState(isLoginOrRegister === "Login");
 
     const toggleForm = () => setIsLogin((current) => !current);
 

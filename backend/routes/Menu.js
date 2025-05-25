@@ -1,9 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
-const MenuItem = require("../../models/MenuItem");
-const authenticateJWT = require("../utils/authenticateJWT");
-const authorize = require("../utils/checkPermissions");
+const MenuItem = require("../models/MenuItem");
+const authenticateJWT = require("../middlewares/authenticateJWT");
+const authorize = require("../middlewares/checkPermissions");
 
 const router = express.Router({ mergeParams: true });
 
@@ -14,7 +14,21 @@ router.get("/", authenticateJWT, authorize(["accessToKitchen", "accessToWaiters"
 
         return res.json(items);
     } catch (err) {
-        return res.status(500).json({ message: `Server error: ${err}` });
+        return res.status(500).json({ message: "Server errror" });
+    }
+});
+
+router.get("/:id", authenticateJWT, authorize(["accessToKitchen", "accessToWaiters", "editMenu"]), async (req, res) => {
+    try {
+        const item = await MenuItem.findOne({
+            _id: req.params.id,
+            companyID: req.params.companyId,
+        });
+        if (!item) return res.status(404).json({ error: "Item not found" });
+
+        return res.json(item);
+    } catch (err) {
+        return res.status(500).json({ message: "Server errror" });
     }
 });
 
@@ -39,42 +53,30 @@ router.post("/", authenticateJWT, authorize(["editMenu"]), async (req, res) => {
         await newMenuItem.save({ session });
         await session.commitTransaction();
 
-        return res.status(200).json({ message: "MenuItem created" });
+        return res.status(200).json({ message: "MenuItem created", item: newMenuItem });
     } catch (err) {
         await session.abortTransaction();
-        return res.status(500).json({ message: `Server error: ${err}` });
+        return res.status(500).json({ message: "Server errror" });
     } finally {
         session.endSession();
     }
 });
 
-router.get("/:id", authenticateJWT, authorize(["accessToKitchen", "accessToWaiters", "editMenu"]), async (req, res) => {
-    try {
-        const item = await MenuItem.findOne({
-            _id: req.params.id,
-            companyID: req.params.companyId,
-        });
-        if (!item) return res.status(404).json({ error: "Item not found" });
-
-        return res.json(item);
-    } catch (err) {
-        return res.status(500).json({ message: `Server error: ${err}` });
-    }
-});
-
 router.put("/:id", authenticateJWT, authorize(["editMenu"]), async (req, res) => {
     try {
-        const item = await MenuItem.findOne({
-            _id: req.params.id,
-            companyID: req.params.companyId,
-        });
-        if (!item) return res.status(404).json({ error: "Item not found" });
+        const updatedItem = await MenuItem.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                companyID: req.params.companyId,
+            },
+            req.body,
+            { new: true }
+        );
+        if (!updatedItem) return res.status(404).json({ error: "Item not found" });
 
-        await item.updateOne(req.body);
-
-        return res.status(200).json({ message: "MenuItem Updated" });
+        return res.status(200).json({ message: "Menu Item Updated", item: updatedItem });
     } catch (err) {
-        return res.status(500).json({ message: `Server error: ${err}` });
+        return res.status(500).json({ message: "Server errror" });
     }
 });
 
@@ -93,7 +95,7 @@ router.delete("/:id", authenticateJWT, authorize(["editMenu"]), async (req, res)
 
         return res.status(200).json({ message: "MenuItem Deleted" });
     } catch (err) {
-        return res.status(500).json({ message: `Server error: ${err}` });
+        return res.status(500).json({ message: "Server errror" });
     }
 });
 

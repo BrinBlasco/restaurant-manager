@@ -1,7 +1,6 @@
-// services/getUserRoles.js
-const CompanyEmployee = require("../../models/CompanyEmployee");
-const CompanyEmployeeRole = require("../../models/CompanyEmployeeRole");
-const Role = require("../../models/Role");
+const CompanyEmployee = require("../models/CompanyEmployee");
+const CompanyEmployeeRole = require("../models/CompanyEmployeeRole");
+const Role = require("../models/Role");
 
 const getUserRoles = async (employeeId, companyId) => {
     const companyEmployee = await CompanyEmployee.findOne({
@@ -21,7 +20,7 @@ const getUserRoles = async (employeeId, companyId) => {
         _id: { $in: companyEmployeeRoles.map((r) => r.roleID) },
     });
 
-    return roles; // or roles.map(r => r.name) if you want just names
+    return roles;
 };
 
 module.exports = getUserRoles;

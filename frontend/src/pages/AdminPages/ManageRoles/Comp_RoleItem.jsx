@@ -5,16 +5,19 @@ import axios from "@config/Axios";
 import trashIcon from "@assets/trashIcon.svg";
 import styles from "./Styles/Comp_RoleItem.module.css";
 
-const RoleItem = ({ children, setCurrItemId, currentCompany }) => {
+const RoleItem = ({ children, onRoleDelete, setCurrItemId, currentCompany }) => {
     const { name, description, permissions } = children;
     const [isDelModOpen, setDelModOpen] = useState(false);
 
     const handleDelete = async (id) => {
+        setDelModOpen(false);
         try {
             await axios.delete(`/company/${currentCompany._id}/roles/${id}`);
-        } catch (err) {}
-        setDelModOpen(false);
-        window.location.reload();
+            onRoleDelete(id);
+            setCurrItemId(null);
+        } catch (err) {
+            console.log("Error Deleting");
+        }
     };
 
     return (
@@ -31,10 +34,10 @@ const RoleItem = ({ children, setCurrItemId, currentCompany }) => {
                         let current;
                         switch (ky) {
                             case "accessToKitchen":
-                                current = "Access to Kitchen";
+                                current = "Access Kitchen";
                                 break;
                             case "accessToWaiters":
-                                current = "Access to Waiters";
+                                current = "Access Waiters";
                                 break;
                             case "editMenu":
                                 current = "Edit Menu";

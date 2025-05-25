@@ -1,10 +1,8 @@
-// --- START OF FILE routes/OrderRoutes.js ---
-
 const express = require("express");
 const mongoose = require("mongoose");
-const Order = require("../../models/Order");
-const authenticateJWT = require("../utils/authenticateJWT");
-const authorize = require("../utils/checkPermissions");
+const Order = require("../models/Order");
+const authenticateJWT = require("../middlewares/authenticateJWT");
+const authorize = require("../middlewares/checkPermissions");
 
 const router = express.Router({ mergeParams: true });
 
@@ -12,7 +10,7 @@ router.get("/", authenticateJWT, authorize(["accessToKitchen", "accessToWaiters"
     const { companyId } = req.params;
     const { status } = req.query;
     try {
-        const queryCriteria = { companyId: companyId };
+        const queryCriteria = { companyID: companyId };
         if (status) {
             const statusArray = status.split(",").map((s) => s.trim());
             queryCriteria.status = { $in: statusArray };
@@ -27,7 +25,7 @@ router.get("/", authenticateJWT, authorize(["accessToKitchen", "accessToWaiters"
 router.delete("/:orderId", authenticateJWT, authorize(["accessToKitchen", "accessToWaiters"]), async (req, res) => {
     const { companyId, orderId } = req.params;
     try {
-        const order = await Order.findOneAndDelete({ _id: orderId, companyId: companyId });
+        const order = await Order.findOneAndDelete({ _id: orderId, companyID: companyId });
         const io = req.app.get("socketio");
         if (!io) {
             console.warn("Socket.IO instance not found via app.get('socketio'). Cannot emit NEW_ORDER.");
@@ -48,13 +46,12 @@ router.post("/", authenticateJWT, authorize(["accessToKitchen", "accessToWaiters
     const { table, items } = req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
-        // (!table)
         return res.status(400).json({ message: "Missing required fields: table and items array." });
     }
 
     try {
         const newOrder = new Order({
-            companyId: companyId,
+            companyID: companyId,
             table: table || null,
             items: items,
             status: "Pending",
@@ -94,7 +91,7 @@ router.put("/:orderId/status", authenticateJWT, authorize(["accessToKitchen", "a
 
     try {
         const updatedOrder = await Order.findOneAndUpdate(
-            { _id: orderId, companyId: companyId },
+            { _id: orderId, companyID: companyId },
             { $set: { status: status } },
             { new: true }
         );
@@ -103,13 +100,11 @@ router.put("/:orderId/status", authenticateJWT, authorize(["accessToKitchen", "a
             return res.status(404).json({ message: "Order not found or does not belong to this company." });
         }
 
-        // --- WebSocket Emit ---
-        // Access io using req.app.get('socketio')
-        const io = req.app.get("socketio"); // <--- MODIFICATION
+        const io = req.app.get("socketio");
         if (io) {
             const orderObject = updatedOrder.toObject();
             console.log(`Emitting ORDER_UPDATE to room: ${companyId} for order ${orderId}`);
-            io.to(companyId).emit("ORDER_UPDATE", orderObject); // Use the retrieved io instance
+            io.to(companyId).emit("ORDER_UPDATE", orderObject);
         } else {
             console.warn("Socket.IO instance not found via app.get('socketio'). Cannot emit ORDER_UPDATE.");
         }
@@ -124,12 +119,10 @@ router.put("/:orderId/status", authenticateJWT, authorize(["accessToKitchen", "a
     }
 });
 
-// --- Optional: GET /api/company/:companyId/orders/:orderId ---
 router.get("/:orderId", authenticateJWT, authorize(["accessToKitchen", "accessToWaiters"]), async (req, res) => {
-    // ... (GET single order logic remains the same - no socket emission) ...
     const { companyId, orderId } = req.params;
     try {
-        const order = await Order.findOne({ _id: orderId, companyId: companyId });
+        const order = await Order.findOne({ _id: orderId, companyID: companyId });
         if (!order) {
             return res.status(404).json({ message: "Order not found or does not belong to this company." });
         }
@@ -144,5 +137,3 @@ router.get("/:orderId", authenticateJWT, authorize(["accessToKitchen", "accessTo
 });
 
 module.exports = router;
-
-// --- END OF FILE routes/OrderRoutes.js ---

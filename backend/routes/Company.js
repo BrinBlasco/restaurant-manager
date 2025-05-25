@@ -1,13 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
-const Company = require("../../models/Company");
-const CompanyEmployee = require("../../models/CompanyEmployee");
-const CompanyEmployeeRole = require("../../models/CompanyEmployeeRole");
+const Company = require("../models/Company");
+const CompanyEmployee = require("../models/CompanyEmployee");
+const CompanyEmployeeRole = require("../models/CompanyEmployeeRole");
 
-const Role = require("../../models/Role");
-const authenticateJWT = require("../utils/authenticateJWT");
-const authorize = require("../utils/checkPermissions");
+const Role = require("../models/Role");
+const authenticateJWT = require("../middlewares/authenticateJWT");
+const authorize = require("../middlewares/checkPermissions");
 
 const router = express.Router({ mergeParams: true });
 
@@ -81,7 +81,7 @@ router.get("/:companyId", authenticateJWT, authorize(["editCompany"]), async (re
 
         return res.json(company);
     } catch (err) {
-        return res.status(500).json({ message: `Server error: ${err}` });
+        return res.status(500).json({ message: "Server errror" });
     }
 });
 

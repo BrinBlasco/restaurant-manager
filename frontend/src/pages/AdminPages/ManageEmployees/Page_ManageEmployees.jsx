@@ -8,7 +8,7 @@ import { useAuth } from "@utils/Auth/AuthContext";
 import styles from "./Styles/Page_ManageEmployees.module.css";
 
 const ManageEmployees = () => {
-    const { employee, currentCompany, currentPermissions, loading } = useAuth();
+    const { currentCompany, currentPermissions, loading } = useAuth();
     const [activeTab, setActiveTab] = useState("Employees");
     const [employees, setEmployees] = useState([]);
     const [roles, setRoles] = useState([]);
@@ -18,6 +18,29 @@ const ManageEmployees = () => {
         getEmployees();
         getRoles();
     }, [loading, currentCompany]);
+
+    const handleFireEmployee = async (employeeId) => {
+        try {
+            const res = axios.delete(`/company/${currentCompany._id}/employees/${employeeId}`);
+            setEmployees(() => {
+                const exists = employees.some((emp) => emp._id === employeeId);
+                return exists ? employees.filter((emp) => emp._id !== employeeId) : employees;
+            });
+        } catch (error) {
+            console.log("Error deleting employee");
+        }
+    };
+    const handleUpdateEmployee = async (updatedEmployee) => {
+        try {
+            // const res = axios.put(`/company/${currentCompany._id}/employees/${updatedEmployee._id}`, updatedEmployee);
+            // setEmployees(() => {
+            //     const exists = employees.some((emp) => emp._id === updatedEmployee._id);
+            //     return exists ? employees.filter((emp) => emp._id !== updatedEmployee._id) : employees;
+            // });
+        } catch (error) {
+            console.log("Error updating employee");
+        }
+    };
 
     const getEmployees = async () => {
         try {
@@ -41,7 +64,7 @@ const ManageEmployees = () => {
     if (!currentPermissions.editEmployees) {
         return (
             <>
-                <Navbar companyName={currentCompany.name} activeTab={activeTab} onTabChange={setActiveTab} />
+                <Navbar navBarLabel={"Admin Panel"} activeTab={activeTab} onTabChange={setActiveTab} />
                 <div
                     style={{
                         height: "100%",
@@ -56,16 +79,23 @@ const ManageEmployees = () => {
 
     return (
         <>
-            <Navbar companyName={currentCompany.name} activeTab={activeTab} onTabChange={setActiveTab} />
+            <Navbar navBarLabel={"Admin Panel"} activeTab={activeTab} onTabChange={setActiveTab} />
             <div className={styles.container}>
                 <div className={styles.left}>
-                    {employees.map((emp, i) => (
-                        <Employee key={i} userData={emp} currentCompanyId={currentCompany._id} />
+                    {employees.map((emp) => (
+                        <Employee
+                            key={emp._id}
+                            userData={emp}
+                            handleUpdateEmployee={handleUpdateEmployee}
+                            handleFireEmployee={handleFireEmployee}
+                        />
                     ))}
                 </div>
                 <div className={styles.right}>
                     <AddEmployeeForm
                         roles={roles.filter((role) => role.name !== "Owner")}
+                        employees={employees}
+                        setEmployees={setEmployees}
                         currentCompanyId={currentCompany._id}
                     />
                 </div>

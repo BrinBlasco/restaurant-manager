@@ -3,7 +3,6 @@
     height: 7.5rem;
     border-radius: 1rem;
     border: 1px dashed black;
-    margin-right: 2rem;
 }
 
 .form {
@@ -33,13 +32,32 @@
     padding: 0.3rem;
 }
 
+.nameAndPrice {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-left: 2rem;
+}
+
+@media screen and (max-width: 1200px) {
+    .img-name-price {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .nameAndPrice {
+        padding-left: 0 !important;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .img-name-price {
         flex-wrap: wrap;
         gap: 1rem;
     }
 
-    .icon {
-        margin-right: 0 !important;
+    .nameAndPrice {
+        padding-left: 0 !important;
     }
 }

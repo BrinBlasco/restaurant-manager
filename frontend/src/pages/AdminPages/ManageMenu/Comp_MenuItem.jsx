@@ -7,28 +7,28 @@ import Modal from "@components/Modal";
 import trashIcon from "@assets/trashIcon.svg";
 import styles from "./Styles/Comp_MenuItem.module.css";
 
-const MenuItem = ({ children, setCurrItemId, currentCompany }) => {
-    const { name, price, description, ingredients, recipe } = children;
+const MenuItem = ({ children, setCurrItemId, currentCompany, onMenuItemDelete }) => {
+    const { name, price, description } = children;
     const [isDelModOpen, setDelModOpen] = useState(false);
 
     const handleDelete = async (id) => {
+        setDelModOpen(false);
         try {
             const res = await axios.delete(`/company/${currentCompany._id}/menu-items/${id}`);
-            console.log(res);
+            onMenuItemDelete(id);
+            setCurrItemId(null);
         } catch (err) {
-            console.log(err);
+            console.log("Error Deleting");
         }
-        setDelModOpen(false);
-        window.location.reload();
     };
 
     return (
         <>
             <div data-item-type={children.type} className={styles.item}>
                 <h4>{name}</h4>
-                <br />
-                <div style={{ marginBottom: "2rem" }}>
-                    <p style={{ overflowWrap: "break-word" }}>{description}</p>
+                <p style={{ fontSize: "0.7rem", color: "darkgray" }}>{children.type}</p>
+                <div style={{ marginBottom: "1.75rem" }}>
+                    <p style={{ overflowWrap: "break-word", margin: "0.5rem 0" }}>{description}</p>
                 </div>
 
                 <div
@@ -65,11 +65,7 @@ const MenuItem = ({ children, setCurrItemId, currentCompany }) => {
                         />
                     </button>
 
-                    <Button
-                        size={"small"}
-                        backgroundColor={"var(--primary-color)"}
-                        onClick={() => setCurrItemId(children._id)}
-                    >
+                    <Button size={"small"} backgroundColor={"var(--primary-color)"} onClick={() => setCurrItemId(children._id)}>
                         Edit
                     </Button>
                 </div>

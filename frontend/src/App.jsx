@@ -22,9 +22,9 @@ const App = () => {
         <Router>
             <AuthProvider>
                 <Routes>
-                    <Route path="/" element={<AuthPage login={true} />} />
-                    <Route path="/login" element={<AuthPage login={true} />} />
-                    <Route path="/login" element={<AuthPage login={false} />} />
+                    <Route path="/" element={<AuthPage isLoginOrRegister={"Login"} />} />
+                    <Route path="/login" element={<AuthPage isLoginOrRegister={"Login"} />} />
+                    <Route path="/register" element={<AuthPage isLoginOrRegister={"Register"} />} />
 
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/dashboard/changeAccountData" element={<ChangeAccountDataPage />} />

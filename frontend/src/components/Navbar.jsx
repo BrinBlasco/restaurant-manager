@@ -7,7 +7,7 @@ import { useAuth } from "@utils/Auth/AuthContext";
 import "./Styles/Navbar.css";
 
 const Navbar = ({
-    companyName = "Company Name",
+    navBarLabel,
     tabs = ["Company", "Employees", "Roles", "Menu"],
     links = ["/AdminPanel/ManageCompany", "/AdminPanel/ManageEmployees", "/AdminPanel/ManageRoles", "/AdminPanel/ManageMenu"],
 }) => {
@@ -65,7 +65,7 @@ const Navbar = ({
 
     return (
         <header className="navbar--Navbar">
-            <div className="logo">{companyName}</div>
+            <div className="logo">{navBarLabel}</div>
             <div style={{ display: "flex" }}>
                 <nav className="nav-links">
                     {tabs.map((tab, idx) => (
@@ -146,7 +146,7 @@ const Navbar = ({
 };
 
 Navbar.propTypes = {
-    companyName: PropTypes.string,
+    navBarLabel: PropTypes.string,
     tabs: PropTypes.arrayOf(PropTypes.string),
     links: PropTypes.arrayOf(PropTypes.string),
 };

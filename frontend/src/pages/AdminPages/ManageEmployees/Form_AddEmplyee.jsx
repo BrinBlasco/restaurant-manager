@@ -4,7 +4,7 @@ import Button from "@components/Button";
 import RoleSelector from "./Comp_RoleSelector";
 import styles from "./Styles/Form_AddEmployee.module.css";
 
-const AddEmplyeeForm = ({ roles, currentCompanyId }) => {
+const AddEmplyeeForm = ({ roles, employees, setEmployees, currentCompanyId }) => {
     const [newEmployee, setNewEmployee] = useState("");
     const [currentRoles, setCurrentRoles] = useState([]);
 
@@ -24,8 +24,8 @@ const AddEmplyeeForm = ({ roles, currentCompanyId }) => {
         }
         try {
             const res = await axios.post(`/company/${currentCompanyId}/employees/${newEmployee}`, currentRoles);
+            setEmployees(() => [res.data.employee, ...employees]);
             console.log(res);
-            location.reload();
         } catch (err) {
             console.log(err);
         }

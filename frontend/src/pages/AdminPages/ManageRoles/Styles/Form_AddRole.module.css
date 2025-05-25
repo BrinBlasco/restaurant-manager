@@ -19,3 +19,13 @@
     min-height: 5rem;
     padding: 0.3rem;
 }
+
+
+.roleLabels {
+    cursor: pointer;
+    z-index: 99;
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
+}

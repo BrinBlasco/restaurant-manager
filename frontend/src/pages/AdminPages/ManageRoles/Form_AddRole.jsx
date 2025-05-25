@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 import Button from "@components/Button";
 import styles from "./Styles/Form_AddRole.module.css";
 
-const AddRoleForm = ({ currentItem, currentCompany }) => {
-    const [role, setRoles] = useState({
+const AddRoleForm = ({ setCurrItem, setCurrItemId, currentItem, currentCompany, upsertState }) => {
+    const defaultRole = {
         name: "",
         description: "",
         permissions: {
@@ -17,36 +17,36 @@ const AddRoleForm = ({ currentItem, currentCompany }) => {
             editMenu: false,
         },
         companyID: currentCompany._id,
-    });
-
-    const handleSumbit = async (e) => {
-        e.preventDefault();
-        if (currentItem) {
-            try {
-                await axios.put(`/company/${currentCompany._id}/roles/${currentItem._id}`, role);
-                //window.location.reload();
-            } catch {
-                console.error("Error");
-            }
-        } else {
-            try {
-                await axios.post(`/company/${currentCompany._id}/roles/`, role);
-                window.location.reload();
-            } catch (err) {
-                console.log(err);
-            }
-        }
     };
+
+    const [role, setRoles] = useState(defaultRole);
 
     useEffect(() => {
         if (!currentItem) return;
         setRoles(currentItem);
     }, [currentItem]);
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const res = currentItem
+                ? await axios.put(`/company/${currentCompany._id}/roles/${currentItem._id}`, role)
+                : await axios.post(`/company/${currentCompany._id}/roles/`, role);
+
+            upsertState(res.data.item);
+            setRoles(defaultRole);
+            setCurrItem(null);
+            setCurrItemId(null);
+        } catch {
+            console.error("New Role submission failed");
+        }
+    };
+
     return (
         <>
             <h1>{!currentItem ? "Add Role" : "Edit Role"}</h1>
-            <form onSubmit={handleSumbit} className={styles.form}>
+            <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.addMenuItemFields}>
                     <label htmlFor="addRoleName">Role Name</label>
                     <input
@@ -80,7 +80,7 @@ const AddRoleForm = ({ currentItem, currentCompany }) => {
                         alignContent: "space-around",
                     }}
                 >
-                    <label htmlFor="editCompany">
+                    <label htmlFor="editCompany" className={styles.roleLabels}>
                         <input
                             type="checkbox"
                             name="editCompany"
@@ -98,7 +98,7 @@ const AddRoleForm = ({ currentItem, currentCompany }) => {
                         />
                         <span style={{ padding: "0.5rem" }}>Edit Company</span>
                     </label>
-                    <label htmlFor="editEmployees">
+                    <label htmlFor="editEmployees" className={styles.roleLabels}>
                         <input
                             type="checkbox"
                             name="editEmployees"
@@ -117,7 +117,7 @@ const AddRoleForm = ({ currentItem, currentCompany }) => {
                         <span style={{ padding: "0.5rem" }}>Edit Employees</span>
                     </label>
 
-                    <label htmlFor="editRoles">
+                    <label htmlFor="editRoles" className={styles.roleLabels}>
                         <input
                             type="checkbox"
                             name="editRoles"
@@ -138,7 +138,7 @@ const AddRoleForm = ({ currentItem, currentCompany }) => {
 
                     <span style={{ flexBasis: "100%", height: 0 }}></span>
 
-                    <label htmlFor="editMenu">
+                    <label htmlFor="editMenu" className={styles.roleLabels}>
                         <input
                             type="checkbox"
                             name="editMenu"
@@ -157,7 +157,7 @@ const AddRoleForm = ({ currentItem, currentCompany }) => {
                         <span style={{ padding: "0.5rem" }}>Edit Menu</span>
                     </label>
 
-                    <label htmlFor="accessKitchen">
+                    <label htmlFor="accessKitchen" className={styles.roleLabels}>
                         <input
                             type="checkbox"
                             name="accessKitchen"
@@ -173,9 +173,9 @@ const AddRoleForm = ({ currentItem, currentCompany }) => {
                                 });
                             }}
                         />
-                        <span style={{ padding: "0.5rem" }}>Access to Kitchen</span>
+                        <span style={{ padding: "0.5rem" }}>Access Kitchen</span>
                     </label>
-                    <label htmlFor="accessWaiters">
+                    <label htmlFor="accessWaiters" className={styles.roleLabels}>
                         <input
                             type="checkbox"
                             name="accessWaiters"
@@ -191,7 +191,7 @@ const AddRoleForm = ({ currentItem, currentCompany }) => {
                                 });
                             }}
                         />
-                        <span style={{ padding: "0.5rem" }}>Access to Waiters</span>
+                        <span style={{ padding: "0.5rem" }}>Access Waiters</span>
                     </label>
                 </div>
                 <Button type="submit" style={{ marginTop: "1rem" }} backgroundColor={"var(--primary-color)"}>

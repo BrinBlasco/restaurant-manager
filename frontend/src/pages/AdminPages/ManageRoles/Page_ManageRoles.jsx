@@ -21,11 +21,25 @@ const ManageRoles = () => {
         } catch (err) {}
     };
 
-    const getItem = async (id) => {
-        try {
-            const res = await axios.get(`/company/${currentCompany._id}/roles/${id}`);
-            setCurrItem(res.data);
-        } catch (err) {}
+    const getItem = (id) => {
+        const item = items.find((item) => item._id === id);
+        setCurrItem(item);
+    };
+
+    const upsertState = (newItem) => {
+        setItems(() => {
+            const exists = items.some((item) => item._id === newItem._id);
+
+            return exists ? items.map((item) => (item._id === newItem._id ? newItem : item)) : [...items, newItem];
+        });
+    };
+
+    const removeFromState = (deletedRoleId) => {
+        setItems(() => {
+            const exists = items.some((item) => item._id === deletedRoleId);
+
+            return exists ? items.filter((item) => item._id !== deletedRoleId) : items;
+        });
     };
 
     useEffect(() => {
@@ -60,14 +74,19 @@ const ManageRoles = () => {
 
     return (
         <>
-            <Navbar companyName={currentCompany.name} activeTab={activeTab} onTabChange={setActiveTab} />
+            <Navbar navBarLabel={"Admin Panel"} activeTab={activeTab} onTabChange={setActiveTab} />
             <div className={styles.container}>
                 <div className={styles.left}>
                     <h1>Roles</h1>
                     <div className={styles.items}>
                         {items.length > 0 ? (
                             items.map((item, idx) => (
-                                <RoleItem key={idx} setCurrItemId={setCurrItemId} currentCompany={currentCompany}>
+                                <RoleItem
+                                    key={idx}
+                                    onRoleDelete={removeFromState}
+                                    setCurrItemId={setCurrItemId}
+                                    currentCompany={currentCompany}
+                                >
                                     {item}
                                 </RoleItem>
                             ))
@@ -77,7 +96,13 @@ const ManageRoles = () => {
                     </div>
                 </div>
                 <div className={styles.right}>
-                    <AddRoleForm currentItem={currItem} currentCompany={currentCompany} />
+                    <AddRoleForm
+                        setCurrItem={setCurrItem}
+                        setCurrItemId={setCurrItemId}
+                        currentItem={currItem}
+                        currentCompany={currentCompany}
+                        upsertState={upsertState}
+                    />
                 </div>
             </div>
         </>

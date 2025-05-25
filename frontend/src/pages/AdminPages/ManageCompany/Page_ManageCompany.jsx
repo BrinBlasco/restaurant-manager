@@ -9,7 +9,7 @@ import styles from "./Styles/Page_ManageCompany.module.css";
 import { useAuth } from "@utils/Auth/AuthContext";
 
 const ManageCompany = () => {
-    const { employee, currentPermissions, currentCompany, loading } = useAuth();
+    const { currentPermissions, currentCompany, loading } = useAuth();
 
     const [activeTab, setActiveTab] = useState("Company");
     const [error, setError] = useState("");
@@ -47,21 +47,21 @@ const ManageCompany = () => {
         if (!currentCompany) return;
 
         setIdentifiers({
-            crn: currentCompany.crn || "", // fallback to empty string
-            vat: currentCompany.vat || "", // fallback to empty string
-            companyName: currentCompany.name || "", // fallback to empty string
+            crn: currentCompany.crn || "",
+            vat: currentCompany.vat || "",
+            companyName: currentCompany.name || "",
         });
 
         setAddress({
-            country: currentCompany.address?.country || "", // fallback to empty string if undefined
-            address: currentCompany.address?.address || "", // fallback to empty string if undefined
-            zip: currentCompany.address?.zip || "", // fallback to empty string if undefined
-            city: currentCompany.address?.city || "", // fallback to empty string if undefined
+            country: currentCompany.address?.country || "",
+            address: currentCompany.address?.address || "",
+            zip: currentCompany.address?.zip || "",
+            city: currentCompany.address?.city || "",
         });
 
         setContactInfo({
-            email: currentCompany.contactInfo?.email || "", // fallback to empty string if undefined
-            phoneNumber: currentCompany.contactInfo?.phoneNumber || "", // fallback to empty string if undefined
+            email: currentCompany.contactInfo?.email || "",
+            phoneNumber: currentCompany.contactInfo?.phoneNumber || "",
         });
     }, [currentCompany]);
 
@@ -118,7 +118,7 @@ const ManageCompany = () => {
     if (!currentPermissions.editCompany) {
         return (
             <>
-                <Navbar companyName={currentCompany.name} activeTab={activeTab} onTabChange={setActiveTab} />
+                <Navbar navBarLabel={"Admin Panel"} activeTab={activeTab} onTabChange={setActiveTab} />
                 <div
                     style={{
                         height: "100%",
@@ -133,7 +133,7 @@ const ManageCompany = () => {
 
     return (
         <>
-            <Navbar companyName={currentCompany.name} activeTab={activeTab} onTabChange={setActiveTab} />
+            <Navbar navBarLabel={"Admin Panel"} activeTab={activeTab} onTabChange={setActiveTab} />
 
             <div className={styles.container}>
                 <div className={styles.contact}>

@@ -1,4 +1,4 @@
-const getUserRoles = require("../services/getEmployeeRoles");
+const getUserRoles = require("../utilities/getEmployeeRoles");
 
 const authorize =
     (requiredPermissions, mode = "any") =>

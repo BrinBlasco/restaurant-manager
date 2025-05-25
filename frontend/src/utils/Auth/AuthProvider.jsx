@@ -100,6 +100,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const resetAuthState = () => {
+        sessionStorage.removeItem("selectedCompanyId");
         setIsAuthenticated(false);
         setEmployee(null);
         setCompanies([]);

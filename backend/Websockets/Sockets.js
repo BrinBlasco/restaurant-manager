@@ -1,17 +1,22 @@
 const { Server } = require("socket.io");
-const socketAuthMiddleware = require("./socketAuthMiddleware");
+const socketAuthMiddleware = require("../middlewares/socketAuthMiddleware");
 
 const initSocketServer = (httpServer) => {
+    const corsConfig =
+        process.env.NODE_ENV === "production"
+            ? undefined
+            : {
+                  origin: "http://localhost:9999",
+                  methods: ["GET", "POST"],
+                  credentials: true,
+              };
+
     const io = new Server(httpServer, {
-        cors: {
-            origin: process.env.SITE_URI,
-            methods: ["GET", "POST"],
-            credentials: true,
-        },
+        cors: corsConfig,
+        path: "/socket.io/",
     });
 
     console.log("Socket.IO server initializing...");
-
     io.use(socketAuthMiddleware);
 
     io.on("connection", (socket) => {

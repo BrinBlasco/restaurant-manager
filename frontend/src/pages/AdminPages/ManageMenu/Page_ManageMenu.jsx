@@ -15,11 +15,12 @@ const ManageMenu = () => {
 
     const [activeTab, setActiveTab] = useState("Menu");
     const [items, setItems] = useState([]);
+    const [filteredItems, setFilteredItems] = useState([]);
 
     const [currItemId, setCurrItemId] = useState(null);
     const [currItem, setCurrItem] = useState(null);
 
-    const [currFilter, setCurrFilter] = useState("");
+    const [currFilter, setCurrFilter] = useState("All");
 
     useEffect(() => {
         if (loading && !currentCompany) return;
@@ -27,41 +28,52 @@ const ManageMenu = () => {
     }, [loading, currentCompany]);
 
     useEffect(() => {
-        if (!currItemId) return;
+        if (!currItemId) {
+            setCurrItem(null);
+            return;
+        }
         getItem(currItemId);
     }, [currItemId]);
 
+    const filterItems = () => {
+        if (currFilter === "All") {
+            setFilteredItems([...items]);
+        } else {
+            const newFilteredItems = items.filter((item) => item.type === currFilter);
+            setFilteredItems(newFilteredItems);
+        }
+    };
+
     useEffect(() => {
         filterItems();
-    }, [currFilter]);
+    }, [currFilter, items]);
 
-    const filterItems = () => {
-        let items = document.querySelectorAll(`.${styles.items} .${styles.item}`);
-        items.forEach((item) => {
-            if (item.dataset.itemType !== currFilter && currFilter !== "all") {
-                item.style.display = "none";
-            } else {
-                item.style.display = "block";
-            }
+    const removeFromState = (itemId) => {
+        setItems((prevItems) => {
+            const exists = prevItems.some((item) => item._id === itemId);
+            return exists ? prevItems.filter((item) => item._id !== itemId) : prevItems;
+        });
+    };
+
+    const upsertState = (newItem) => {
+        setItems((prevItems) => {
+            const exists = prevItems.some((item) => item._id === newItem._id);
+            return exists ? prevItems.map((item) => (item._id === newItem._id ? newItem : item)) : [...prevItems, newItem];
         });
     };
 
     const getItems = async () => {
         try {
             const res = await axios.get(`/company/${currentCompany._id}/menu-items`);
-            setItems(() => [...res.data]);
+            setItems([...res.data]);
         } catch (err) {
             console.log(err);
         }
     };
 
-    const getItem = async (id) => {
-        try {
-            const res = await axios.get(`/company/${currentCompany._id}/menu-items/${id}`);
-            setCurrItem(res.data);
-        } catch (err) {
-            console.log(err);
-        }
+    const getItem = (id) => {
+        const item = items.find((item) => item._id === id);
+        setCurrItem(item);
     };
 
     if (loading) {
@@ -72,12 +84,7 @@ const ManageMenu = () => {
         return (
             <>
                 <Navbar />
-                <div
-                    style={{
-                        height: "100%",
-                        placeContent: "center",
-                    }}
-                >
+                <div style={{ height: "100%", placeContent: "center" }}>
                     <h1 style={{ fontSize: "5rem", textAlign: "center" }}>403 - Forbidden</h1>
                 </div>
             </>
@@ -86,30 +93,77 @@ const ManageMenu = () => {
 
     return (
         <>
-            <Navbar companyName={currentCompany?.name} activeTab={activeTab} onTabChange={setActiveTab} />
+            <Navbar navBarLabel={"Admin Panel"} activeTab={activeTab} onTabChange={setActiveTab} />
 
             <div className={styles.ManageMenu}>
                 <div className={styles.left}>
                     <h1>Menu Items</h1>
 
                     <div className={styles.filters}>
-                        <div onClick={() => setCurrFilter("all")}>All</div>
-                        <div onClick={() => setCurrFilter("food")}>Food</div>
-                        <div onClick={() => setCurrFilter("drink")}>Drinks</div>
+                        <div onClick={() => setCurrFilter("All")} className={currFilter === "All" ? styles.activeFilter : ""}>
+                            All
+                        </div>
+                        <div
+                            onClick={() => setCurrFilter("Full Course")}
+                            className={currFilter === "Full Course" ? styles.activeFilter : ""}
+                        >
+                            Full Course
+                        </div>
+                        <div
+                            onClick={() => setCurrFilter("Appetizers")}
+                            className={currFilter === "Appetizers" ? styles.activeFilter : ""}
+                        >
+                            Appetizers
+                        </div>
+                        <div
+                            onClick={() => setCurrFilter("Dessert")}
+                            className={currFilter === "Dessert" ? styles.activeFilter : ""}
+                        >
+                            Dessert
+                        </div>
+                        <div
+                            onClick={() => setCurrFilter("Salads")}
+                            className={currFilter === "Salads" ? styles.activeFilter : ""}
+                        >
+                            Salads
+                        </div>
+                        <div
+                            onClick={() => setCurrFilter("Alcoholic Drink")}
+                            className={currFilter === "Alcoholic Drink" ? styles.activeFilter : ""}
+                        >
+                            Alcoholic Drink
+                        </div>
+                        <div onClick={() => setCurrFilter("Misc")} className={currFilter === "Misc" ? styles.activeFilter : ""}>
+                            Misc
+                        </div>
                     </div>
 
-                    <div className={styles.items}>
-                        {items.length > 0 &&
-                            items.map((item, idx) => (
-                                <MenuItem key={idx} setCurrItemId={setCurrItemId} currentCompany={currentCompany}>
+                    <div className={styles.items} id="menuItemContainer">
+                        {filteredItems.length > 0 ? (
+                            filteredItems.map((item) => (
+                                <MenuItem
+                                    key={item._id}
+                                    onMenuItemDelete={removeFromState}
+                                    setCurrItemId={setCurrItemId}
+                                    currentCompany={currentCompany}
+                                >
                                     {item}
                                 </MenuItem>
-                            ))}
+                            ))
+                        ) : (
+                            <p style={{ padding: "0.5rem" }}>No items match the current filter or no items available.</p>
+                        )}
                     </div>
                 </div>
 
                 <div className={styles.right}>
-                    <AddMenuItemForm currentItem={currItem} currentCompany={currentCompany} />
+                    <AddMenuItemForm
+                        setCurrItem={setCurrItem}
+                        setCurrItemId={setCurrItemId}
+                        currentItem={currItem}
+                        currentCompany={currentCompany}
+                        upsertState={upsertState}
+                    />
                 </div>
             </div>
         </>

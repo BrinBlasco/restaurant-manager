@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import RoleSelector from "./Comp_RoleSelector";
 import styles from "./Styles/Modal_EditEmployee.module.css";
 import Button from "@components/Button";
+import Modal from "@components/Modal";
+import { useAuth } from "@utils/Auth/AuthContext";
 
-const EditEmployeeModal = ({ userData, setEditModalOpen }) => {
-    useEffect(() => {}, []);
+const EditEmployeeModal = ({ userData, handleFireEmployee, setEditModalOpen }) => {
+    const { employee } = useAuth();
+    const [isDelModalOpen, setDelModalOpen] = useState(false);
 
     const formatDate = (isoDate) => {
         if (!isoDate) return "";
@@ -112,13 +115,36 @@ const EditEmployeeModal = ({ userData, setEditModalOpen }) => {
                     </div>
 
                     <div className={styles.buttons}>
-                        <Button size="small" onClick={() => setEditModalOpen(false)}>
-                            Close
+                        {userData._id !== employee._id && userData.roles.some((rl) => rl.name != "Owner") && (
+                            <Button
+                                size="small"
+                                backgroundColor="var(--error-color)"
+                                color="black"
+                                onClick={() => setDelModalOpen(true)}
+                            >
+                                Fire
+                            </Button>
+                        )}
+
+                        <Button style={{ marginLeft: "auto" }} size="small" color="black">
+                            Save
                         </Button>
-                        <Button size="small">Save</Button>
                     </div>
                 </div>
             </div>
+            {isDelModalOpen && (
+                <Modal
+                    message="Are you sure you want to fire this person?"
+                    onConfirm={() => {
+                        handleFireEmployee(userData._id);
+                        setDelModalOpen(false);
+                        setEditModalOpen(false);
+                    }}
+                    onCancel={() => {
+                        setDelModalOpen(false);
+                    }}
+                />
+            )}
         </>
     );
 };

@@ -50,6 +50,7 @@
     padding: 2.5rem;
     background-color: var(--surface-color);
     border-radius: 1rem;
+    flex-shrink: 0;
 }
 
 .container .hours input {
@@ -69,4 +70,44 @@
 
 .container .contact input {
     padding: 0.1rem !important;
+}
+
+@media screen and (max-width: 1064px) {
+
+    .container {
+        flex-direction: column;
+        justify-content: start;
+        margin-top: 1rem;
+    }
+
+    .wrapper {
+        order: -1;
+    }
+
+    .hours {
+        order: -1;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        justify-content: start;
+        margin-top: 1rem;
+    }
+
+    .wrapper {
+        order: -1;
+    }
+
+    .hours {
+        order: -1;
+    }
+}
+
+
+@media screen and (max-width: 500px) {
+    .wrapper {
+        width: 96%;
+    }
 }

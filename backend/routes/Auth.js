@@ -2,7 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
-const authenticateJWT = require("./utils/authenticateJWT");
+const authenticateJWT = require("../middlewares/authenticateJWT");
 
 const Employee = require("../models/Employee");
 const CompanyEmployee = require("../models/CompanyEmployee");
@@ -49,13 +49,7 @@ router.post("/signup", async (req, res) => {
             return res.status(409).json({ message: `Duplicate value for ${field}` });
         }
 
-        res.status(500).json({ message: `Error while creating user: ${err}` });
-
-        //* ========================================================================
-        //TODO ADD ERROR HANDLING SO DONT JUST THROW THE STACKTRACE BACK TO THE USER
-        //? ONE OF THEM ALREADY DONE AND THIS IS PROBABLY IT FOR NOW
-        //! DO NOT FORGET TO PUT OUT THE STACK TRACE WITH THE ****${ERR}**** ----------- VERY IMPORTANT FOR LATER ( IMMA REGRET WRITING THIS )
-        // DO THIS MORE OR LESS EVEYRHWERE I GUESS
+        res.status(500).json({ message: "Error while creating user" });
     } finally {
         await session.endSession();
     }
@@ -86,9 +80,8 @@ router.post("/login", async (req, res) => {
         user.account.lastLogin = Date.now();
         user.save();
 
-        return res.status(200).json({ message: "Logged in successfully" }); //res.json({ token });
+        return res.status(200).json({ message: "Logged in successfully" });
     } catch (err) {
-        //return res.status(401).json({ message: 'Invalid credentials' }); //
         return res.status(500).send(`Server error: ${err}`);
     }
 });
@@ -110,10 +103,7 @@ router.get("/protected/data", authenticateJWT, async (req, res) => {
         }
 
         const companiesWithRoles = await CompanyEmployee.aggregate([
-            // Match CompanyEmployee records for this employee
             { $match: { employeeID: employeeProfile._id } },
-
-            // Lookup company details
             {
                 $lookup: {
                     from: "companies",
@@ -123,8 +113,6 @@ router.get("/protected/data", authenticateJWT, async (req, res) => {
                 },
             },
             { $unwind: "$company" },
-
-            // Lookup role assignments
             {
                 $lookup: {
                     from: "companyemployeeroles",
@@ -138,9 +126,7 @@ router.get("/protected/data", authenticateJWT, async (req, res) => {
                     path: "$roleAssignments",
                     preserveNullAndEmptyArrays: true,
                 },
-            }, // Include companies with no roles
-
-            // Lookup role details
+            },
             {
                 $lookup: {
                     from: "roles",
@@ -150,8 +136,6 @@ router.get("/protected/data", authenticateJWT, async (req, res) => {
                 },
             },
             { $unwind: { path: "$role", preserveNullAndEmptyArrays: true } },
-
-            // Group by companyID, collecting company details and roles
             {
                 $group: {
                     _id: "$companyID",
@@ -164,8 +148,6 @@ router.get("/protected/data", authenticateJWT, async (req, res) => {
                     },
                 },
             },
-
-            // Project the final structure
             {
                 $project: {
                     _id: 0,
@@ -179,7 +161,6 @@ router.get("/protected/data", authenticateJWT, async (req, res) => {
             const rolesObject = {};
             company.roles.forEach((role, index) => {
                 if (role.roleName) {
-                    // Skip empty roles due to preserveNullAndEmptyArrays
                     rolesObject[`role${index + 1}`] = {
                         roleName: role.roleName,
                         permissions: role.permissions,
@@ -187,12 +168,10 @@ router.get("/protected/data", authenticateJWT, async (req, res) => {
                 }
             });
             return {
-                ...company.company, // Spread company fields (_id, name, etc.)
+                ...company.company,
                 roles: rolesObject,
             };
         });
-
-        // Step 4: Return the response
         return res.status(200).json({
             employee: {
                 _id: employeeProfile._id,

@@ -6,19 +6,21 @@ const cookieParser = require("cookie-parser");
 const http = require("http");
 const helmet = require("helmet");
 
-const initSocketServer = require("./Websockets/Sockets");
+const initSocketServer = require("./websockets/Sockets");
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
 
-app.use(
-    cors({
-        credentials: true,
-        origin: process.env.SITE_URI,
-    })
-);
+if (process.env.NODE_ENV === "development") {
+    app.use(
+        cors({
+            credentials: true,
+            origin: ["http://localhost:9999"],
+        })
+    );
+}
 
 app.use(helmet());
 app.use(cookieParser());
@@ -37,19 +39,18 @@ const runProcess = async () => {
 };
 runProcess().catch(console.dir);
 
-const AuthRoutes = require("./routes/Auth");
-
-const MenuRoutes = require("./routes/ManageCompany/Menu");
-const RolesRoutes = require("./routes/ManageCompany/Roles");
-const EmployeesRoutes = require("./routes/ManageCompany/Employees");
-const OrderRoutes = require("./routes/ManageCompany/Orders");
-
-const CompanyRoutes = require("./routes/ManageCompany/Company");
-const UserRoutes = require("./routes/User");
-const { path } = require("./models/Schemas/AddressSchema");
-
 const io = initSocketServer(server);
 app.set("socketio", io);
+
+const AuthRoutes = require("./routes/Auth");
+
+const MenuRoutes = require("./routes/Menu");
+const RolesRoutes = require("./routes/Roles");
+const EmployeesRoutes = require("./routes/Employees");
+const OrderRoutes = require("./routes/Orders");
+
+const CompanyRoutes = require("./routes/Company");
+const UserRoutes = require("./routes/User");
 
 app.use("/api/auth", AuthRoutes);
 app.use("/api/user", UserRoutes);
@@ -59,6 +60,9 @@ app.use("/api/company/:companyId/menu-items", MenuRoutes);
 app.use("/api/company/:companyId/employees", EmployeesRoutes);
 app.use("/api/company/:companyId/orders", OrderRoutes);
 
+app.get("/", async (req, res) => {
+    return res.status(200).json({ message: "API is working..." });
+});
+
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, "127.0.0.1", () => console.log(`Server running on port ${PORT}`));
-//server.listen(PORT, "0.0.0.0", () => console.log(`Server running on port ${PORT}`));

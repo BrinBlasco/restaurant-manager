@@ -4,10 +4,10 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
     server: {
-        port: 8000,
+        port: 9999,
     },
     preview: {
-        port: 9999,
+        port: 8000,
     },
     plugins: [react()],
     resolve: {
@@ -20,5 +20,8 @@ export default defineConfig({
             "@config": path.resolve(__dirname, "src/.config"),
             "@utils": path.resolve(__dirname, "src/utils"),
         },
+    },
+    build: {
+        sourcemap: true,
     },
 });

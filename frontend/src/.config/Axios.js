@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const isProd = import.meta.env.MODE === "production";
+
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = apiUrl;
+axios.defaults.baseURL = isProd ? "/api" : "http://localhost:5000/api";
 
 export default axios;

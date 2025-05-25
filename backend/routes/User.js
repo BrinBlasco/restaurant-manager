@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const authenticateJWT = require("./utils/authenticateJWT");
+const authenticateJWT = require("../middlewares/authenticateJWT");
 
 const Employee = require("../models/Employee");
 const router = express.Router({ mergeParams: true });
@@ -12,7 +12,7 @@ router.get("/:userId", async (req, res) => {
 
         return res.status(200).json(user);
     } catch (err) {
-        return res.status(500).json({ message: `Server error: ${err}` });
+        return res.status(500).json({ message: "Server errror" });
     }
 });
 
@@ -109,7 +109,7 @@ router.get("/:userId/address", authenticateJWT, async (req, res) => {
 
         return res.status(200).json(user.address);
     } catch (err) {
-        return res.status(500).json({ message: `Server error: ${err}` });
+        return res.status(500).json({ message: "Server errror" });
     }
 });
 

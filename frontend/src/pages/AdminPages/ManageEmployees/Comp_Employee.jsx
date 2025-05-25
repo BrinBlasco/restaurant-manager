@@ -3,22 +3,9 @@ import React, { useEffect, useState } from "react";
 import Button from "@components/Button";
 import EditEmployeeModal from "./Modal_EditEmployee";
 import styles from "./Styles/Comp_Employee.module.css";
-import { useAuth } from "@utils/Auth/AuthContext";
 
-const Employee = ({ userData, currentCompanyId }) => {
+const Employee = ({ userData, handleUpdateEmployee, handleFireEmployee }) => {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
-    const [roles, setRoles] = useState([]);
-
-    const getEmployeeRoles = async (employeeId) => {
-        try {
-            const res = await axios.get(`/company/${currentCompanyId}/employees/${employeeId}/roles`);
-            setRoles(res.data);
-        } catch (err) {}
-    };
-
-    useEffect(() => {
-        getEmployeeRoles(userData._id);
-    }, [userData?._id, currentCompanyId]);
 
     return (
         <>
@@ -33,7 +20,7 @@ const Employee = ({ userData, currentCompanyId }) => {
 
                 <div>
                     <div className={styles.roles}>
-                        {roles.map((role) => {
+                        {userData.roles.map((role) => {
                             return (
                                 <div className={styles.role} key={role._id}>
                                     {role.name}
@@ -42,28 +29,29 @@ const Employee = ({ userData, currentCompanyId }) => {
                         })}
                     </div>
                 </div>
-                <div
+                <Button
                     style={{
                         position: "absolute",
                         top: "1rem",
                         right: "1rem",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "1rem",
+                    }}
+                    size={"small"}
+                    backgroundColor={"var(--primary-color)"}
+                    onClick={() => {
+                        setEditModalOpen(true);
                     }}
                 >
-                    <Button
-                        size={"small"}
-                        backgroundColor={"var(--primary-color)"}
-                        onClick={() => {
-                            setEditModalOpen(true);
-                        }}
-                    >
-                        Edit
-                    </Button>
-                </div>
+                    View
+                </Button>
             </div>
-            {isEditModalOpen && <EditEmployeeModal setEditModalOpen={setEditModalOpen} userData={userData} />}
+            {isEditModalOpen && (
+                <EditEmployeeModal
+                    handleUpdateEmployee={handleUpdateEmployee}
+                    handleFireEmployee={handleFireEmployee}
+                    setEditModalOpen={setEditModalOpen}
+                    userData={userData}
+                />
+            )}
         </>
     );
 };
