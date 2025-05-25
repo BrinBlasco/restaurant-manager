@@ -168,4 +168,3 @@ Base Path: `/api` (handled by your Axios config and backend routing)
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ---
-Made with ❤️ by Brin Blasco
