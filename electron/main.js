@@ -1,10 +1,9 @@
-
-const { app, BrowserWindow } = require('electron');
-const path = require('path');
+const { app, BrowserWindow } = require("electron");
+const path = require("path");
 
 let mainWindow;
 
-app.on('ready', () => {
+app.on("ready", () => {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
@@ -13,7 +12,11 @@ app.on('ready', () => {
             contextIsolation: true,
         },
     });
+    mainWindow.setTitle("Quick Serve App");
 
-    mainWindow.loadURL('http://localhost:9999');
+    mainWindow.maximize();
+
+    mainWindow.loadURL("https://quickserveapp.ddns.net/");
+
+    mainWindow.setMenuBarVisibility(false);
 });
-
