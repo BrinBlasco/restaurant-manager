@@ -226,6 +226,11 @@
 }
 
 .buttonPrimary {
-    background-color: #00c853;
-    color: #fff;
+    background-color: #00c853cc;
+    color: white;
+}
+
+.buttonPay {
+    background-color: #bbc800cc;
+    color: white;
 }

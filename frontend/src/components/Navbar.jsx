@@ -1,28 +1,49 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
-import { useAuth } from "@utils/Auth/AuthContext";
 
+import { useAuth } from "@utils/Auth/AuthContext";
+import { useClickOutside } from "@hooks/useClickOutside";
 import "./Styles/Navbar.css";
+
+const UserActions = ({ onNavigate, onLogout }) => (
+    <>
+        <button onClick={() => onNavigate("/dashboard")}>Dashboard</button>
+        <button
+            onClick={() => {
+                onLogout();
+                onNavigate("/login");
+            }}
+        >
+            Logout
+        </button>
+    </>
+);
 
 const Navbar = ({
     navBarLabel,
-    tabs = ["Company", "Employees", "Roles", "Menu"],
-    links = ["/AdminPanel/ManageCompany", "/AdminPanel/ManageEmployees", "/AdminPanel/ManageRoles", "/AdminPanel/ManageMenu"],
+    navLinks = {
+        Company: "/AdminPanel/manageCompany",
+        Employees: "/AdminPanel/manageEmployees",
+        Roles: "/AdminPanel/manageRoles",
+        Menu: "/AdminPanel/manageMenu",
+    },
 }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { logout } = useAuth();
 
     const [showDropdown, setShowDropdown] = useState(false);
-
     const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     const dropdownRef = useRef(null);
-    const mobileMenuRef = useRef(null);
     const userCircleRef = useRef(null);
+    const mobileMenuRef = useRef(null);
     const burgerIconRef = useRef(null);
+
+    useClickOutside([dropdownRef, userCircleRef], () => setShowDropdown(false));
+    useClickOutside([mobileMenuRef, burgerIconRef], () => setShowMobileMenu(false));
 
     const handleNavigation = (path) => {
         navigate(path);
@@ -30,125 +51,67 @@ const Navbar = ({
         setShowMobileMenu(false);
     };
 
-    const toggleDropdown = () => setShowDropdown(!showDropdown);
-    const toggleMobileMenu = () => setShowMobileMenu(!showMobileMenu);
+    const renderNavLinks = (reversed = false) => {
+        let entries = Object.entries(navLinks);
+        if (reversed) {
+            entries.reverse();
+        }
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (
-                dropdownRef.current &&
-                userCircleRef.current &&
-                !dropdownRef.current.contains(event.target) &&
-                !userCircleRef.current.contains(event.target) &&
-                showDropdown
-            ) {
-                setShowDropdown(false);
-            }
-
-            if (
-                mobileMenuRef.current &&
-                burgerIconRef.current &&
-                !mobileMenuRef.current.contains(event.target) &&
-                !burgerIconRef.current.contains(event.target) &&
-                showMobileMenu
-            ) {
-                setShowMobileMenu(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [showDropdown, showMobileMenu]);
+        return entries.map(([label, path]) => (
+            <a
+                key={path}
+                href={path}
+                onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation(path);
+                }}
+                className={location.pathname === path ? "active-link" : ""}
+            >
+                {label}
+            </a>
+        ));
+    };
 
     return (
         <header className="navbar--Navbar">
             <div className="logo">{navBarLabel}</div>
-            <div style={{ display: "flex" }}>
-                <nav className="nav-links">
-                    {tabs.map((tab, idx) => (
-                        <a
-                            key={tab}
-                            href={links[idx]}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleNavigation(links[idx]);
-                            }}
-                            className={location.pathname === links[idx] ? "active-link" : ""}
-                        >
-                            {tab}
-                        </a>
-                    ))}
-                </nav>
 
-                <div className="navbar--right-section">
-                    <div className="menu-icon" onClick={toggleMobileMenu} ref={burgerIconRef}>
-                        <FaBars />
-                    </div>
+            <nav className="nav-links">{renderNavLinks()}</nav>
 
-                    <div
-                        className="employee-circle"
-                        onClick={toggleDropdown}
-                        ref={userCircleRef}
-                        aria-expanded={showDropdown}
-                        aria-haspopup="true"
-                    >
-                        <FaUserCircle size={30} />
-                    </div>
-
-                    {showDropdown && (
-                        <div className="dropdown-menu" ref={dropdownRef}>
-                            <button onClick={() => handleNavigation("/dashboard")}>Dashboard</button>
-
-                            <button
-                                onClick={() => {
-                                    logout();
-                                    handleNavigation("/login");
-                                }}
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    )}
+            <div className="navbar--right-section">
+                <div className="menu-icon" onClick={() => setShowMobileMenu(true)} ref={burgerIconRef}>
+                    <FaBars />
                 </div>
+
+                <div
+                    className="employee-circle"
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    ref={userCircleRef}
+                    aria-expanded={showDropdown}
+                    aria-haspopup="true"
+                >
+                    <FaUserCircle size={30} />
+                </div>
+
+                {showDropdown && (
+                    <div className="dropdown-menu" ref={dropdownRef}>
+                        <UserActions onNavigate={handleNavigation} onLogout={logout} />
+                    </div>
+                )}
             </div>
+
+            {/* Mobile Flyout Menu */}
             <div className={`mobile-menu ${showMobileMenu ? "open" : ""}`} ref={mobileMenuRef}>
-                <div className="close-icon" onClick={toggleMobileMenu}>
+                <div className="close-icon" onClick={() => setShowMobileMenu(false)}>
                     <FaTimes size={30} />
                 </div>
-
-                <nav className="mobile-nav-links">
-                    {tabs.map((tab, idx) => (
-                        <a
-                            key={tab}
-                            href={links[idx]}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleNavigation(links[idx]);
-                            }}
-                            className={location.pathname === links[idx] ? "active-link" : ""}
-                        >
-                            {tab}
-                        </a>
-                    ))}
-                </nav>
-
+                <nav className="mobile-nav-links">{renderNavLinks(true)}</nav>
                 <div className="mobile-user-links">
-                    <button onClick={() => handleNavigation("/dashboard")}>Dashboard</button>
-
-                    <button onClick={() => console.log("Logout clicked")}>Logout</button>
+                    <UserActions onNavigate={handleNavigation} onLogout={logout} />
                 </div>
             </div>
         </header>
     );
-};
-
-Navbar.propTypes = {
-    navBarLabel: PropTypes.string,
-    tabs: PropTypes.arrayOf(PropTypes.string),
-    links: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default Navbar;

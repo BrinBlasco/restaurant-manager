@@ -48,6 +48,7 @@ const MenuRoutes = require("./routes/Menu");
 const RolesRoutes = require("./routes/Roles");
 const EmployeesRoutes = require("./routes/Employees");
 const OrderRoutes = require("./routes/Orders");
+const ReceiptRoutes = require("./routes/Receipts");
 
 const CompanyRoutes = require("./routes/Company");
 const UserRoutes = require("./routes/User");
@@ -59,6 +60,7 @@ app.use("/api/company/:companyId/roles", RolesRoutes);
 app.use("/api/company/:companyId/menu-items", MenuRoutes);
 app.use("/api/company/:companyId/employees", EmployeesRoutes);
 app.use("/api/company/:companyId/orders", OrderRoutes);
+app.use("/api/company/:companyId/receipts", ReceiptRoutes);
 
 app.get("/", async (req, res) => {
     return res.status(200).json({ message: "API is working..." });

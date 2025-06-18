@@ -23,8 +23,11 @@ const Page_Kitchen = () => {
             <>
                 <Navbar
                     navBarLabel={"Kitchen"}
-                    tabs={["Kitchen", "Waiters"]}
-                    links={["/kitchen", "/waiters"]}
+                    navLinks={{
+                        POS: "/receipts",
+                        Kitchen: "/kitchen",
+                        Waiters: "/waiters",
+                    }}
                     onTabChange={setActiveTab}
                 />
                 <div style={{ height: "100%", placeContent: "center" }}>
@@ -75,7 +78,7 @@ const Page_Kitchen = () => {
         };
 
         const handleOrderUpdate = (updatedOrder) => {
-            if (["Delivered", "Cancelled"].includes(updatedOrder.status)) {
+            if (["Delivered"].includes(updatedOrder.status)) {
                 setOrders((prevOrders) => prevOrders.filter((order) => order._id !== updatedOrder._id));
             } else {
                 setOrders((prevOrders) => prevOrders.map((order) => (order._id === updatedOrder._id ? updatedOrder : order)));
@@ -135,8 +138,11 @@ const Page_Kitchen = () => {
         <>
             <Navbar
                 navBarLabel={"Kitchen"}
-                tabs={["Kitchen", "Waiters"]}
-                links={["/kitchen", "/waiters"]}
+                navLinks={{
+                    POS: "/receipts",
+                    Kitchen: "/kitchen",
+                    Waiters: "/waiters",
+                }}
                 onTabChange={setActiveTab}
             />
             <div className={styles.appContainer}>

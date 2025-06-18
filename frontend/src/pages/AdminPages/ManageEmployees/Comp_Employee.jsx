@@ -1,12 +1,9 @@
 import axios from "@config/Axios";
 import React, { useEffect, useState } from "react";
 import Button from "@components/Button";
-import EditEmployeeModal from "./Modal_EditEmployee";
 import styles from "./Styles/Comp_Employee.module.css";
 
-const Employee = ({ userData, handleUpdateEmployee, handleFireEmployee }) => {
-    const [isEditModalOpen, setEditModalOpen] = useState(false);
-
+const Employee = ({ userData, onViewClick }) => {
     return (
         <>
             <div className={styles.item}>
@@ -37,21 +34,11 @@ const Employee = ({ userData, handleUpdateEmployee, handleFireEmployee }) => {
                     }}
                     size={"small"}
                     backgroundColor={"var(--primary-color)"}
-                    onClick={() => {
-                        setEditModalOpen(true);
-                    }}
+                    onClick={onViewClick}
                 >
                     View
                 </Button>
             </div>
-            {isEditModalOpen && (
-                <EditEmployeeModal
-                    handleUpdateEmployee={handleUpdateEmployee}
-                    handleFireEmployee={handleFireEmployee}
-                    setEditModalOpen={setEditModalOpen}
-                    userData={userData}
-                />
-            )}
         </>
     );
 };

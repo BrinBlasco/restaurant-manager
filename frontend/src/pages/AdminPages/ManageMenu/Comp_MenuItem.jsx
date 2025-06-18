@@ -71,7 +71,7 @@ const MenuItem = ({ children, setCurrItemId, currentCompany, onMenuItemDelete })
                 </div>
 
                 <div className={styles.price}>
-                    <span>${price}</span>
+                    <span>${parseFloat(price).toFixed(2)}</span>
                 </div>
             </div>
 

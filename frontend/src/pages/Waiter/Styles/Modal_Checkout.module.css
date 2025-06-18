@@ -1,0 +1,320 @@
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modalContent {
+    background-color: var(--surface-color);
+    color: var(--text-on-surface);
+    width: 100%;
+    max-width: 550px;
+    max-height: 95vh;
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--secondary-text-color);
+    padding: 5px;
+    transition: color 0.2s ease;
+    z-index: 10;
+}
+
+.closeButton:hover {
+    color: var(--text-on-surface);
+}
+
+.modalHeader {
+    margin-top: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: var(--primary-color, #bb86fc);
+    font-weight: 600;
+    font-size: 1.8rem;
+    padding-right: 30px;
+}
+
+.modalActions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: 1rem;
+    padding-top: 20px;
+    margin-top: auto;
+    flex-shrink: 0;
+}
+
+.modalButton {
+    flex-grow: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+    text-align: center;
+}
+
+.modalButton:active {
+    transform: scale(0.98);
+}
+
+.secondaryButton {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--secondary-text-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.secondaryButton:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.primaryButton {
+    background-color: var(--primary-color, #bb86fc);
+    color: var(--text-on-primary, #000);
+}
+
+.primaryButton:hover {
+    background-color: rgba(187, 134, 252, 0.85);
+}
+
+.primaryButton:disabled {
+    background-color: rgba(187, 134, 252, 0.4);
+    color: rgba(0, 0, 0, 0.5);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.stepContent {
+    animation: contentFadeIn 0.3s ease-in-out;
+}
+
+@keyframes contentFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.billSummary {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.billTotal {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-on-surface);
+    line-height: 1;
+}
+
+.billTotalLabel {
+    font-size: 1rem;
+    color: var(--secondary-text-color);
+    margin-top: 5px;
+}
+
+.peopleCounter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+}
+
+.counterButtons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.counterBtn {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    font-size: 1.5rem;
+    color: var(--secondary-text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.counterBtn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-on-surface);
+}
+
+.counterBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.peopleCount {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.tipOptions,
+.paymentMethodsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.tipBtn,
+.methodCard {
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tipBtn.selected,
+.methodCard.selected {
+    border-color: var(--primary-color, #bb86fc);
+    background-color: var(--primary-color, #bb86fc);
+    color: var(--text-on-primary, #000);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb, 187, 134, 252), 0.3);
+}
+
+.methodCard h4 {
+    margin: 10px 0 5px;
+    font-weight: 500;
+}
+
+.methodCard p {
+    font-size: 0.9em;
+    margin: 0;
+    color: var(--secondary-text-color);
+}
+
+.methodCard.selected p {
+    color: var(--text-on-primary, #000);
+    opacity: 0.8;
+}
+
+.customTipInput {
+    padding: 10px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    color: var(--text-on-surface);
+    margin-top: 15px;
+}
+
+.customTipInput:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb, 187, 134, 252), 0.3);
+    outline: none;
+}
+
+.summarySection {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summaryRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 0.95rem;
+}
+
+.summaryRow.total {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 5px;
+}
+
+.perPersonDisplay {
+    background-color: rgba(var(--primary-color-rgb, 187, 134, 252), 0.1);
+    border-left: 4px solid var(--primary-color, #bb86fc);
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 1em;
+}
+
+.progressBar {
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 25px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background-color: var(--primary-color, #bb86fc);
+    width: 0%;
+    transition: width 0.4s ease-in-out;
+}
+
+.paymentConfirmation {
+    text-align: center;
+}
+
+.paymentConfirmationIcon {
+    font-size: 3rem;
+    color: var(--success-color, #27ae60);
+}
+
+.receiptItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

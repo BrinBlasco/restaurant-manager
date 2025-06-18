@@ -1,12 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Styles/Comp_RoleSelector.module.css";
 
-const RoleSelector = ({ initialRoles, onChange }) => {
+const RoleSelector = ({ allRoles, currentRoles, onChange }) => {
     const [selectedRoles, setSelectedRoles] = useState([]);
+
+    useEffect(() => {
+        if (Array.isArray(currentRoles)) {
+            setSelectedRoles(currentRoles);
+        }
+    }, [currentRoles]);
+
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
-    const availableRoles = initialRoles.filter(
+    const availableRoles = allRoles.filter(
         (initialRole) => !selectedRoles.some((selectedRole) => selectedRole._id === initialRole._id)
     );
 
@@ -15,7 +22,7 @@ const RoleSelector = ({ initialRoles, onChange }) => {
     };
 
     const handleSelectRole = (roleId) => {
-        const roleToAdd = initialRoles.find((r) => r._id === roleId);
+        const roleToAdd = allRoles.find((r) => r._id === roleId);
         if (roleToAdd) {
             const newSelectedRoles = [...selectedRoles, roleToAdd];
             setSelectedRoles(newSelectedRoles);
@@ -67,7 +74,6 @@ const RoleSelector = ({ initialRoles, onChange }) => {
                     >
                         {role.name}
                         <svg
-                            xmlns="http://www.w3.org/2000/svg"
                             width="16"
                             height="16"
                             viewBox="0 0 24 24"
@@ -90,15 +96,7 @@ const RoleSelector = ({ initialRoles, onChange }) => {
                         toggleDropdown();
                     }}
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                    >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>

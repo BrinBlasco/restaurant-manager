@@ -79,7 +79,7 @@ const ManageRoles = () => {
                 <div className={styles.left}>
                     <h1>Roles</h1>
                     <div className={styles.items}>
-                        {items.length > 0 ? (
+                        {items.length > 0 &&
                             items.map((item, idx) => (
                                 <RoleItem
                                     key={idx}
@@ -89,10 +89,7 @@ const ManageRoles = () => {
                                 >
                                     {item}
                                 </RoleItem>
-                            ))
-                        ) : (
-                            <p></p>
-                        )}
+                            ))}
                     </div>
                 </div>
                 <div className={styles.right}>

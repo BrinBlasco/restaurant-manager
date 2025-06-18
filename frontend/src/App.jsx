@@ -16,6 +16,7 @@ import ChangeAccountDataPage from "@pages/Dashboard/ChangeAccountData/Page_Chang
 
 import WaiterPage from "@pages/Waiter/Page_Waiter";
 import KitchenPage from "@pages/Kitchen/Page_Kitchen";
+import ReceiptsPage from "@pages/Receipts/Page_Receipts";
 
 const App = () => {
     return (
@@ -35,6 +36,8 @@ const App = () => {
                     <Route path="/AdminPanel/ManageRoles" element={<ManageRolesPage />} />
                     <Route path="/AdminPanel/ManageEmployees" element={<ManageEmployeesPage />} />
                     <Route path="/AdminPanel/ManageCompany" element={<ManageCompanyPage />} />
+
+                    <Route path="/receipts" element={<ReceiptsPage />} />
 
                     <Route element={<SocketLayout />}>
                         <Route path="/waiters" element={<WaiterPage />} />

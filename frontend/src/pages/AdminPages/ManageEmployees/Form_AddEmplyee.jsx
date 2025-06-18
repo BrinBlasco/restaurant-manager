@@ -25,7 +25,8 @@ const AddEmplyeeForm = ({ roles, employees, setEmployees, currentCompanyId }) =>
         try {
             const res = await axios.post(`/company/${currentCompanyId}/employees/${newEmployee}`, currentRoles);
             setEmployees(() => [res.data.employee, ...employees]);
-            console.log(res);
+            setNewEmployee("");
+            alert("Added a new employee.");
         } catch (err) {
             console.log(err);
         }
@@ -52,9 +53,9 @@ const AddEmplyeeForm = ({ roles, employees, setEmployees, currentCompanyId }) =>
                 </div>
                 <div className={styles.addEmployeeFields}>
                     <p>Roles: </p>
-                    <RoleSelector initialRoles={roles} onChange={handleRolesChange} />
+                    <RoleSelector allRoles={roles} onChange={handleRolesChange} />
                 </div>
-                <Button type="submit" style={{ marginTop: "auto" }} backgroundColor={"var(--primary-color)"}>
+                <Button type="submit" style={{ marginTop: "0.5rem" }} backgroundColor={"var(--primary-color)"}>
                     Add Employee
                 </Button>
             </form>

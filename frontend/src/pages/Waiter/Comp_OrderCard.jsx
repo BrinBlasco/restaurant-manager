@@ -83,7 +83,14 @@ const OrderCard = ({ onUpdateStatus, onDelete, order }) => {
                     Mark as Delivered
                 </button>
             )}
-
+            {order.status === "Delivered" && (
+                <button
+                    className={`${styles.actionButton} ${styles.buttonPay}`}
+                    onClick={() => onUpdateStatus(order._id, "Paid")}
+                >
+                    Mark as Paid
+                </button>
+            )}
             {isDelModalOpen && (
                 <Modal
                     message="Are you sure you want to delete this order?"

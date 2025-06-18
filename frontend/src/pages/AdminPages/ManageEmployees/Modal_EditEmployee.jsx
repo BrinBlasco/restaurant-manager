@@ -1,25 +1,48 @@
 import React, { useEffect, useState } from "react";
 import RoleSelector from "./Comp_RoleSelector";
+import NumericInput from "@components/NumericInput.jsx";
 import styles from "./Styles/Modal_EditEmployee.module.css";
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 import { useAuth } from "@utils/Auth/AuthContext";
+import { RxCross2 } from "react-icons/rx";
 
-const EditEmployeeModal = ({ userData, handleFireEmployee, setEditModalOpen }) => {
+const EditEmployeeModal = ({ userData, allRoles, closeModal, handleUpdateEmployee, handleFireEmployee }) => {
     const { employee } = useAuth();
     const [isDelModalOpen, setDelModalOpen] = useState(false);
+    const [currentRoles, setCurrentRoles] = useState([]);
+    const [rolesChanged, setRolesChanged] = useState(false);
+
+    const compEmpData = {
+        _id: userData._id,
+        salary: userData?.salary,
+        hireDate: userData?.hireDate,
+        terminationDate: userData?.terminationDate,
+        roles: userData?.roles,
+    };
+
+    const [updatedCompEmpData, setUpdatedCompEmpData] = useState(compEmpData);
 
     const formatDate = (isoDate) => {
         if (!isoDate) return "";
         return new Date(isoDate).toISOString().split("T")[0]; // yyyy-MM-dd
     };
 
+    const handleRolesChange = (selectedRoles) => {
+        let roleIds = [];
+        for (let role of selectedRoles) {
+            roleIds.push(role._id);
+        }
+        setRolesChanged(true);
+        setCurrentRoles(roleIds);
+    };
+
     return (
         <>
             <div className={styles.cover}>
                 <div className={styles.wrapper}>
-                    <div className={styles.exit} onClick={() => setEditModalOpen(false)}>
-                        x
+                    <div className={styles.exit} onClick={closeModal}>
+                        <RxCross2 />
                     </div>
 
                     <h1>Edit Employee</h1>
@@ -97,19 +120,42 @@ const EditEmployeeModal = ({ userData, handleFireEmployee, setEditModalOpen }) =
                                         type="date"
                                         id="employmentDate"
                                         style={{ padding: "0.2rem" }}
-                                        value={userData.emplymentDate}
+                                        value={formatDate(updatedCompEmpData.hireDate)}
+                                        onChange={(e) => {
+                                            setUpdatedCompEmpData({ ...updatedCompEmpData, hireDate: e.target.value });
+                                        }}
+                                    />
+                                </div>
+                                <div className={styles.formField}>
+                                    <label htmlFor="terminationDate">Date of Termination</label>
+                                    <input
+                                        type="date"
+                                        id="terminationDate"
+                                        style={{ padding: "0.2rem" }}
+                                        value={formatDate(updatedCompEmpData.terminationDate)}
+                                        onChange={(e) => {
+                                            setUpdatedCompEmpData({ ...updatedCompEmpData, terminationDate: e.target.value });
+                                        }}
                                     />
                                 </div>
                                 <div className={styles.formField}>
                                     <label htmlFor="salary">Salary</label>
-                                    <input type="text" id="salary" />
+                                    <NumericInput
+                                        maxLength={6}
+                                        value={updatedCompEmpData.salary}
+                                        id={"salary"}
+                                        onChange={(e) => {
+                                            setUpdatedCompEmpData({ ...updatedCompEmpData, salary: e.target.value });
+                                        }}
+                                    />
                                 </div>
-                                <div className={styles.formField}>
-                                    <label htmlFor="terminationDate">Date of Termination</label>
-                                    <input type="date" id="terminationDate" style={{ padding: "0.2rem" }} />
-                                </div>
-                                Roles:
-                                {/*<RoleSelector /> */}
+                                {compEmpData.roles.some((el) => el.name !== "Owner") && (
+                                    <RoleSelector
+                                        allRoles={allRoles}
+                                        currentRoles={compEmpData.roles}
+                                        onChange={handleRolesChange}
+                                    />
+                                )}
                             </form>
                         </div>
                     </div>
@@ -126,7 +172,15 @@ const EditEmployeeModal = ({ userData, handleFireEmployee, setEditModalOpen }) =
                             </Button>
                         )}
 
-                        <Button style={{ marginLeft: "auto" }} size="small" color="black">
+                        <Button
+                            style={{ marginLeft: "auto" }}
+                            size="small"
+                            color="black"
+                            onClick={() => {
+                                handleUpdateEmployee(updatedCompEmpData, currentRoles, rolesChanged);
+                                closeModal();
+                            }}
+                        >
                             Save
                         </Button>
                     </div>
@@ -138,7 +192,7 @@ const EditEmployeeModal = ({ userData, handleFireEmployee, setEditModalOpen }) =
                     onConfirm={() => {
                         handleFireEmployee(userData._id);
                         setDelModalOpen(false);
-                        setEditModalOpen(false);
+                        closeModal();
                     }}
                     onCancel={() => {
                         setDelModalOpen(false);

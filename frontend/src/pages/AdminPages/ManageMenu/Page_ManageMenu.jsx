@@ -56,6 +56,7 @@ const ManageMenu = () => {
     };
 
     const upsertState = (newItem) => {
+        alert("Success");
         setItems((prevItems) => {
             const exists = prevItems.some((item) => item._id === newItem._id);
             return exists ? prevItems.map((item) => (item._id === newItem._id ? newItem : item)) : [...prevItems, newItem];

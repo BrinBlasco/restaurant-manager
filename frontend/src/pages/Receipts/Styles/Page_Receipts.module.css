@@ -1,0 +1,205 @@
+/* Styles/ReceiptsPage.module.css */
+
+.pageContainer {
+    padding: 2rem;
+    background-color: var(--main-bg-color);
+    min-height: 100vh;
+    color: var(--main-text-color);
+}
+
+.pageHeader {
+    color: var(--main-text-color);
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.filterContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.filterButton {
+    padding: 8px 16px;
+    border: 1px solid var(--input-border-c);
+    background-color: var(--surface-color);
+    color: var(--secondary-text-color);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.filterButton:hover {
+    background-color: var(--input-bgc);
+}
+
+.filterButtonActive {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary, #000);
+    border-color: var(--primary-color);
+}
+
+.datePickerContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1rem;
+}
+
+.dateInput {
+    padding: 8px 12px;
+    border: 1px solid var(--input-border-c);
+    background-color: var(--input-bgc);
+    border-radius: 5px;
+    font-size: 0.9rem;
+    color: var(--main-text-color);
+}
+
+.dateInput:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.receiptsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1.5rem;
+}
+
+.receiptCard {
+    background-color: var(--surface-color);
+    color: var(--main-text-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.companyInfo h3 {
+    margin: 0 0 5px 0;
+    color: var(--main-text-color);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.companyInfo p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+    line-height: 1.4;
+}
+
+.printButton {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary, #000);
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.printButton:hover {
+    opacity: 0.85;
+}
+
+.divider {
+    border: none;
+    height: 1px;
+    background-color: var(--primary-color);
+    opacity: 0.5;
+    margin: 0;
+}
+
+.orderDetails p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--secondary-text-color);
+    line-height: 1.5;
+}
+
+.itemsTable {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.tableHeader,
+.tableRow {
+    display: grid;
+    grid-template-columns: 4fr 1fr 2fr 2fr;
+    gap: 1rem;
+    padding: 8px 0;
+    align-items: center;
+    text-align: right;
+}
+
+.tableHeader {
+    color: var(--main-text-color);
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 0.9rem;
+}
+
+.tableRow {
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tableRow:last-child {
+    border-bottom: none;
+}
+
+.tableHeader>span:first-child,
+.tableRow>span:first-child {
+    text-align: left;
+}
+
+.totalsSection {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.totalsSection div {
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.totalsSection .finalTotal {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--main-text-color);
+    margin-top: 5px;
+}
+
+.statusMessage {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--secondary-text-color);
+    margin-top: 3rem;
+}

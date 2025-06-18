@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "@components/Navbar";
 import Button from "@components/Button";
 import Loading from "@components/Loading";
+import Modal from "@components/Modal";
 
 import styles from "./Styles/Page_ManageCompany.module.css";
 
@@ -63,6 +64,26 @@ const ManageCompany = () => {
             email: currentCompany.contactInfo?.email || "",
             phoneNumber: currentCompany.contactInfo?.phoneNumber || "",
         });
+
+        const newTimetableState = {
+            Mon: { start: "", end: "" },
+            Tue: { start: "", end: "" },
+            Wed: { start: "", end: "" },
+            Thu: { start: "", end: "" },
+            Fri: { start: "", end: "" },
+            Sat: { start: "", end: "" },
+            Sun: { start: "", end: "" },
+        };
+
+        if (currentCompany.operatingHours) {
+            for (const day of Object.keys(newTimetableState)) {
+                if (currentCompany.operatingHours[day]) {
+                    newTimetableState[day].start = currentCompany.operatingHours[day].start || "";
+                    newTimetableState[day].end = currentCompany.operatingHours[day].end || "";
+                }
+            }
+        }
+        setTimetable(newTimetableState);
     }, [currentCompany]);
 
     const handleTimeChange = (day, field, value) => {
@@ -77,37 +98,40 @@ const ManageCompany = () => {
 
     const handleDetailsSubmit = async (e) => {
         e.preventDefault();
+        setError("");
         try {
             const res = await axios.patch(`/company/${currentCompany._id}/edit/companyDetails`, {
                 identifiers,
                 address,
             });
-            console.log(res);
-            location.reload();
+            alert("Updated!");
         } catch (err) {
-            // ! Catch the error here
+            alert("Failed, try restarting the application...");
+            setError(err.response?.data?.message || err.message || "Failed to update company details.");
         }
     };
 
     const handleContactSubmit = async (e) => {
         e.preventDefault();
+        setError("");
         try {
             const res = await axios.patch(`/company/${currentCompany._id}/edit/contactInfo`, contactInfo);
-            console.log(res);
-            location.reload();
+            alert("Updated!");
         } catch (err) {
-            // ! Catch the error here
+            alert("Failed, try restarting the application...");
+            setError(err.response?.data?.message || err.message || "Failed to update contact info.");
         }
     };
 
     const handleTimeTableSubmit = async (e) => {
         e.preventDefault();
+        setError("");
         try {
             const res = await axios.patch(`/company/${currentCompany._id}/edit/workingHours`, timetable);
-            console.log(res);
-            location.reload();
+            alert("Updated!");
         } catch (err) {
-            // ! Catch the error here
+            alert("Failed, try restarting the application...");
+            setError(err.response?.data?.message || err.message || "Failed to update working hours.");
         }
     };
 
@@ -123,6 +147,7 @@ const ManageCompany = () => {
                     style={{
                         height: "100%",
                         placeContent: "center",
+                        display: "grid",
                     }}
                 >
                     <h1 style={{ fontSize: "5rem", textAlign: "center" }}>403 - Forbidden</h1>
@@ -146,7 +171,7 @@ const ManageCompany = () => {
                             <input
                                 id="email"
                                 autoComplete="off"
-                                value={contactInfo.email || ""} // fallback to empty string if undefined
+                                value={contactInfo.email || ""}
                                 onChange={(e) => {
                                     setContactInfo({
                                         ...contactInfo,
@@ -160,7 +185,7 @@ const ManageCompany = () => {
                             <input
                                 id="phoneNumber"
                                 autoComplete="off"
-                                value={contactInfo.phoneNumber || ""} // fallback to empty string if undefined
+                                value={contactInfo.phoneNumber || ""}
                                 onChange={(e) => {
                                     setContactInfo({
                                         ...contactInfo,
@@ -189,7 +214,7 @@ const ManageCompany = () => {
                             <input
                                 id="crn"
                                 autoComplete="off"
-                                value={identifiers.crn || ""} // fallback to empty string if undefined
+                                value={identifiers.crn || ""}
                                 onChange={(e) => {
                                     setIdentifiers({
                                         ...identifiers,
@@ -203,7 +228,7 @@ const ManageCompany = () => {
                             <input
                                 id="vat"
                                 autoComplete="off"
-                                value={identifiers.vat || ""} // fallback to empty string if undefined
+                                value={identifiers.vat || ""}
                                 onChange={(e) => {
                                     setIdentifiers({
                                         ...identifiers,
@@ -217,7 +242,7 @@ const ManageCompany = () => {
                             <input
                                 id="name"
                                 autoComplete="off"
-                                value={identifiers.companyName || ""} // fallback to empty string if undefined
+                                value={identifiers.companyName || ""}
                                 onChange={(e) => {
                                     setIdentifiers({
                                         ...identifiers,
@@ -233,7 +258,7 @@ const ManageCompany = () => {
                             <input
                                 id="country"
                                 autoComplete="off"
-                                value={address.country || ""} // fallback to empty string if undefined
+                                value={address.country || ""}
                                 onChange={(e) => {
                                     setAddress({
                                         ...address,
@@ -247,7 +272,7 @@ const ManageCompany = () => {
                             <input
                                 id="address"
                                 autoComplete="off"
-                                value={address.address || ""} // fallback to empty string if undefined
+                                value={address.address || ""}
                                 onChange={(e) => {
                                     setAddress({
                                         ...address,
@@ -275,7 +300,7 @@ const ManageCompany = () => {
                                         type="text"
                                         id="zipcode"
                                         autoComplete="off"
-                                        value={address.zip || ""} // fallback to empty string if undefined
+                                        value={address.zip || ""}
                                         onChange={(e) => {
                                             const zip = e.target.value;
 
@@ -300,7 +325,7 @@ const ManageCompany = () => {
                                         type="text"
                                         id="city"
                                         autoComplete="off"
-                                        value={address.city || ""} // fallback to empty string if undefined
+                                        value={address.city || ""}
                                         onChange={(e) => {
                                             setAddress({
                                                 ...address,
@@ -312,15 +337,6 @@ const ManageCompany = () => {
                             </div>
                         </div>
 
-                        <p
-                            style={{
-                                margin: "-0.5rem",
-                                paddingLeft: "0.5rem",
-                                color: "var(--error-color)",
-                            }}
-                        >
-                            {error}
-                        </p>
                         <Button
                             type="submit"
                             size="small"
@@ -338,14 +354,18 @@ const ManageCompany = () => {
                     <form className={styles["working-hours"]} onSubmit={handleTimeTableSubmit}>
                         <div className={styles.timetable}>
                             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-                                <div key={day}>
-                                    <label htmlFor={`${day}-start`}>{day}</label>
-                                    <div>
+                                <div key={day} className={styles.dayEntry}>
+                                    {" "}
+                                    <label htmlFor={`${day}-start`} className={styles.dayLabel}>
+                                        {day}
+                                    </label>{" "}
+                                    <div className={styles.timeInputs}>
+                                        {" "}
                                         <input
                                             autoComplete="off"
                                             type="time"
                                             id={`${day}-start`}
-                                            value={timetable[day].start || ""} // fallback to empty string if undefined
+                                            value={timetable[day].start || ""}
                                             onChange={(e) => handleTimeChange(day, "start", e.target.value)}
                                         />
                                         <span> - </span>
@@ -353,7 +373,7 @@ const ManageCompany = () => {
                                             autoComplete="off"
                                             type="time"
                                             id={`${day}-end`}
-                                            value={timetable[day].end || ""} // fallback to empty string if undefined
+                                            value={timetable[day].end || ""}
                                             onChange={(e) => handleTimeChange(day, "end", e.target.value)}
                                         />
                                     </div>

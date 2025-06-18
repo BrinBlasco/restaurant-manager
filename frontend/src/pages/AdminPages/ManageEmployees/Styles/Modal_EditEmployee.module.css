@@ -9,6 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: auto;
 }
 
 .wrapper {
@@ -28,6 +29,7 @@
     line-height: 1.8;
     cursor: pointer;
     padding: 1rem;
+    font-weight: 900;
 }
 
 .main {
@@ -44,6 +46,7 @@
 .left {
     padding-right: 1rem;
 }
+
 .right {
     padding-left: 1rem;
 }
@@ -61,6 +64,7 @@
     gap: 0.5rem;
     box-sizing: border-box;
 }
+
 .formField {
     display: flex;
     flex-direction: column;
@@ -79,6 +83,7 @@
 .formFieldInline .formField:first-child {
     width: calc(50% - 0.25rem);
 }
+
 .formFieldInline .formField:last-child {
     width: calc(50% - 0.25rem);
 }
@@ -100,14 +105,17 @@
     .main {
         flex-direction: column;
     }
+
     .left,
     .right {
         padding: 0;
         width: 100%;
     }
+
     .right {
         margin-top: 1rem;
     }
+
     .right form,
     .left form {
         flex: 1;
@@ -126,11 +134,13 @@
         margin-top: 3%;
     }
 }
+
 @media screen and (max-width: 375px) {
     .wrapper {
         width: 96%;
         margin-top: 3%;
     }
+
     .left,
     .right {
         display: block;

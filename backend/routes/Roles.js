@@ -40,7 +40,8 @@ router.post("/", authenticateJWT, authorize(["editRoles"]), async (req, res) => 
     } catch (err) {
         await session.abortTransaction();
 
-        return res.status(500).json({ message: `Server error ${err}` });
+        console.error(err);
+        return res.status(500).json({ message: "Server error" });
     } finally {
         session.endSession();
     }
@@ -57,6 +58,7 @@ router.get("/:roleId", authenticateJWT, authorize(["editRoles", "editEmployees"]
 
         return res.status(200).json(role);
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: "Server errror" });
     }
 });
@@ -76,6 +78,7 @@ router.put("/:roleId", authenticateJWT, authorize(["editRoles"]), async (req, re
 
         return res.status(200).json({ message: "Role Updated", item: updatedRole });
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: "Server errror" });
     }
 });
@@ -102,6 +105,7 @@ router.delete("/:roleId", authenticateJWT, authorize(["editRoles"]), async (req,
         return res.status(200).json({ message: "Role deleted and removed from associated employees" });
     } catch (err) {
         await session.abortTransaction();
+        console.error(err);
         return res.status(500).json({ message: "Server error" });
     }
 });

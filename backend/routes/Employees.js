@@ -13,7 +13,7 @@ const authorize = require("../middlewares/checkPermissions");
 const router = express.Router({ mergeParams: true });
 
 router.get("/", authenticateJWT, authorize(["editEmployees"]), async (req, res) => {
-    const { companyId } = req.params; // companyId comes from the route mount point
+    const { companyId } = req.params;
 
     try {
         const company = await Company.findById(companyId);
@@ -35,14 +35,13 @@ router.get("/", authenticateJWT, authorize(["editEmployees"]), async (req, res) 
         }
 
         const employeesWithRoles = await Promise.all(
-            companyEmployees.map(async (companyEmployeeRelation) => {
-                const employeeData = companyEmployeeRelation.employeeID;
+            companyEmployees.map(async (companyEmployeeData) => {
+                const employeeData = companyEmployeeData.employeeID;
 
                 if (!employeeData || !employeeData._id) {
-                    console.warn(`Could not find employee details for CompanyEmployee: ${companyEmployeeRelation._id}`);
+                    console.warn(`Could not find employee details for CompanyEmployee: ${companyEmployeeData._id}`);
                     return {
                         ...(employeeData || {}),
-                        _id: companyEmployeeRelation.employeeID_actual_if_not_populated,
                         roles: [],
                         error: "Employee details missing",
                     };
@@ -52,6 +51,9 @@ router.get("/", authenticateJWT, authorize(["editEmployees"]), async (req, res) 
 
                 return {
                     ...employeeData,
+                    hireDate: companyEmployeeData.hireDate,
+                    salary: companyEmployeeData.salary,
+                    terminationDate: companyEmployeeData.terminationDate,
                     roles: roles,
                 };
             })
@@ -68,21 +70,241 @@ router.get("/", authenticateJWT, authorize(["editEmployees"]), async (req, res) 
     }
 });
 
-router.put("/:employeeId", authenticateJWT, authorize(["editEmployees"]), async (req, res) => {
-    const { employeeId, companyId } = req.params;
-    const { updatedEmployee } = req.body;
+router.patch("/:employeeId", authenticateJWT, authorize(["editEmployees"]), async (req, res) => {
+    const session = await mongoose.startSession();
 
     try {
-    } catch (err) {}
+        // const { companyId, employeeId } = req.params;
+        const companyId = req.params.companyId;
+        const employeeId = req.params.employeeId;
+        const { updatedEmployee, updatedRoleIds } = req.body;
+
+        if (!updatedEmployee && updatedRoleIds === undefined) {
+            return res.status(400).json({ message: "No update data provided. Send updatedEmployee or updatedRoleIds." });
+        }
+
+        session.startTransaction();
+
+        const companyEmployee = await CompanyEmployee.findOne({ employeeID: employeeId, companyID: companyId });
+        console.log(employeeId, companyId);
+        // {
+        //     salary: updatedEmployee.salary,
+        //     hireDate: updatedEmployee.hireDate,
+        //     terminationDate: updatedEmployee.terminationDate,
+        // },
+        console.log(companyEmployee);
+        if (!companyEmployee) {
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(404).json({ message: "Employee not found in this company" });
+        }
+        await companyEmployee.updateOne(
+            {
+                salary: updatedEmployee.salary,
+                hireDate: updatedEmployee.hireDate,
+                terminationDate: updatedEmployee.terminationDate,
+            },
+            { session }
+        );
+
+        let assignedRoles;
+
+        if (updatedRoleIds !== undefined) {
+            await CompanyEmployeeRole.deleteMany({ companyEmployeeID: companyEmployee._id }, { session });
+
+            if (updatedRoleIds.length > 0) {
+                const validRoles = await Role.find({
+                    _id: { $in: updatedRoleIds },
+                    companyID: companyId,
+                }).session(session);
+
+                if (validRoles.length !== updatedRoleIds.length) {
+                    await session.abortTransaction();
+                    session.endSession();
+                    return res.status(400).json({ message: "One or more provided role IDs are invalid." });
+                }
+
+                const newAssignments = validRoles.map((role) => ({
+                    companyEmployeeID: companyEmployee._id,
+                    roleID: role._id,
+                    assignmentDate: new Date(),
+                }));
+                await CompanyEmployeeRole.insertMany(newAssignments, { session });
+                assignedRoles = validRoles;
+            } else {
+                assignedRoles = [];
+            }
+        }
+
+        await session.commitTransaction();
+
+        if (assignedRoles === undefined) {
+            const currentAssignments = await CompanyEmployeeRole.find({ companyEmployeeID: companyEmployee._id });
+            const currentRoleIds = currentAssignments.map((a) => a.roleID);
+            assignedRoles = await Role.find({ _id: { $in: currentRoleIds } });
+        }
+
+        return res.status(200).json({
+            message: "Employee updated successfully",
+            companyEmployee: companyEmployee,
+            roles: assignedRoles,
+        });
+    } catch (err) {
+        await session.abortTransaction();
+        console.error(err);
+        return res.status(500).json({ message: "Server error" });
+    } finally {
+        session.endSession();
+    }
 });
+
+// router.patch("/:employeeId", authenticateJWT, authorize(["editEmployees"]), async (req, res) => {
+//     const session = await mongoose.startSession();
+
+//     try {
+//         const { companyId, employeeId } = req.params;
+//         const { updatedEmployee, updatedRoleIds } = req.body;
+
+//         if (!updatedEmployee || !Array.isArray(updatedRoleIds)) {
+//             return res.status(400).json({ message: "Invalid request body." });
+//         }
+
+//         session.startTransaction();
+
+//         const companyEmployee = await CompanyEmployee.findOneAndUpdate(
+//             { employeeID: employeeId, companyID: companyId },
+//             {
+//                 $set: {
+//                     salary: updatedEmployee.salary,
+//                     hireDate: updatedEmployee.hireDate,
+//                     terminationDate: updatedEmployee.terminationDate,
+//                 },
+//             },
+//             { new: true, session }
+//         );
+
+//         if (!companyEmployee) {
+//             await session.abortTransaction();
+//             session.endSession();
+//             return res.status(404).json({ message: "Employee not found in this company" });
+//         }
+
+//         if (updatedRoleIds) {
+//             await CompanyEmployeeRole.deleteMany({ companyEmployeeID: companyEmployee._id }, { session });
+
+//             let assignedRoles = [];
+//             if (updatedRoleIds.length > 0) {
+//                 const validRoles = await Role.find({
+//                     _id: { $in: updatedRoleIds },
+//                     companyID: companyId,
+//                 }).session(session);
+
+//                 const newRoleAssignments = validRoles.map((role) => ({
+//                     companyEmployeeID: companyEmployee._id,
+//                     roleID: role._id,
+//                     assignmentDate: new Date(),
+//                 }));
+
+//                 if (newRoleAssignments.length > 0) {
+//                     await CompanyEmployeeRole.insertMany(newRoleAssignments, { session });
+//                 }
+//                 assignedRoles = validRoles;
+//             }
+//         }
+
+//         await session.commitTransaction();
+
+//         return res.status(200).json({
+//             message: "Employee updated successfully",
+//             employee: companyEmployee,
+//             roles: assignedRoles,
+//         });
+//     } catch (err) {
+//         await session.abortTransaction();
+
+//         console.error(err);
+//         return res.status(500).json({ message: "Server error during employee update" });
+//     } finally {
+//         session.endSession();
+//     }
+// });
+
+// router.post("/:employeeUpid", authenticateJWT, authorize(["editEmployees"]), async (req, res) => {
+//     const session = await mongoose.startSession();
+
+//     try {
+//         const { companyId, employeeUpid } = req.params;
+//         const { roleIds } = req.body;
+
+//         if (!Array.isArray(roleIds) || roleIds.length === 0) {
+//             return res.status(400).json({ message: "Request body must include a non-empty 'roleIds' array." });
+//         }
+
+//         session.startTransaction();
+
+//         const employee = await Employee.findOne({ upid: employeeUpid }).session(session);
+//         if (!employee) {
+//             await session.abortTransaction();
+//             session.endSession();
+//             return res.status(404).json({ message: "Employee with that UPID not found" });
+//         }
+
+//         const roles = await Role.find({
+//             _id: { $in: roleIds },
+//             companyID: companyId,
+//         }).session(session);
+
+//         if (roles.length !== roleIds.length) {
+//             await session.abortTransaction();
+//             session.endSession();
+//             return res.status(400).json({ message: "One or more role IDs are invalid or do not belong to this company." });
+//         }
+
+//         const companyEmployee = new CompanyEmployee({
+//             companyID: companyId,
+//             employeeID: employee._id,
+//         });
+//         await companyEmployee.save({ session });
+
+//         const newRoleAssignments = roles.map((role) => ({
+//             companyEmployeeID: companyEmployee._id,
+//             roleID: role._id,
+//             assignmentDate: new Date(),
+//         }));
+
+//         if (newRoleAssignments.length > 0) {
+//             await CompanyEmployeeRole.insertMany(newRoleAssignments, { session });
+//         }
+
+//         await session.commitTransaction();
+
+//         const employeeResponse = employee.toObject();
+//         employeeResponse.roles = roles;
+
+//         return res.status(201).json({
+//             message: "Employee successfully added to the company",
+//             data: employeeResponse,
+//         });
+//     } catch (err) {
+//         await session.abortTransaction();
+
+//         if (err.code === 11000) {
+//             return res.status(409).json({ message: "This employee is already in the company." });
+//         }
+
+//         console.error("Transaction failed: " + err);
+//         return res.status(500).json({ message: "Server error" });
+//     } finally {
+//         session.endSession();
+//     }
+// });
 
 router.post("/:employeeUpid", authenticateJWT, authorize(["editEmployees"]), async (req, res) => {
     const session = await mongoose.startSession();
-
-    const { companyId, employeeUpid } = req.params;
-    const roleIds = req.body;
-
     try {
+        const { companyId, employeeUpid } = req.params;
+        const roleIds = req.body;
+
         session.startTransaction();
 
         const employee = await Employee.findOne({ upid: employeeUpid });

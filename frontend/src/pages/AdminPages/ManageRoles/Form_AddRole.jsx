@@ -38,7 +38,10 @@ const AddRoleForm = ({ setCurrItem, setCurrItemId, currentItem, currentCompany, 
             setRoles(defaultRole);
             setCurrItem(null);
             setCurrItemId(null);
+            alert("Success!");
         } catch {
+            alert("Failed to add a new role.");
+
             console.error("New Role submission failed");
         }
     };
@@ -71,7 +74,7 @@ const AddRoleForm = ({ setCurrItem, setCurrItemId, currentItem, currentCompany, 
                         className={styles.textarea}
                     />
                 </div>
-                <span style={{ marginBottom: "-1rem" }}>Role:</span>
+                <span style={{ marginBottom: "-1.5rem" }}>Permissions:</span>
                 <div
                     style={{
                         display: "flex",
@@ -194,7 +197,7 @@ const AddRoleForm = ({ setCurrItem, setCurrItemId, currentItem, currentCompany, 
                         <span style={{ padding: "0.5rem" }}>Access Waiters</span>
                     </label>
                 </div>
-                <Button type="submit" style={{ marginTop: "1rem" }} backgroundColor={"var(--primary-color)"}>
+                <Button type="submit" style={{ marginTop: "-1rem" }} backgroundColor={"var(--primary-color)"}>
                     {!currentItem ? "Add Role" : "Save Changes"}
                 </Button>
             </form>

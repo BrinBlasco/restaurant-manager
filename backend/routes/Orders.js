@@ -15,7 +15,7 @@ router.get("/", authenticateJWT, authorize(["accessToKitchen", "accessToWaiters"
             const statusArray = status.split(",").map((s) => s.trim());
             queryCriteria.status = { $in: statusArray };
         }
-        const orders = await Order.find(queryCriteria).sort({ createdAt: -1 });
+        const orders = await Order.find(queryCriteria).sort({ createdAt: 1 });
         return res.status(200).json(orders);
     } catch (err) {
         console.error("Error fetching orders:", err);

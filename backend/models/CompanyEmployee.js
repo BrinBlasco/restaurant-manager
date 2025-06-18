@@ -16,7 +16,7 @@ const companyEmployeeSchema = new mongoose.Schema(
         },
 
         salary: { type: Number },
-        hireDate: { type: Date },
+        hireDate: { type: Date, default: Date.now },
         terminationDate: { type: Date },
     },
     { timestamps: true }

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "@components/Navbar";
 import Employee from "./Comp_Employee";
 import AddEmployeeForm from "./Form_AddEmplyee";
+import EditEmployeeModal from "./Modal_EditEmployee";
 import Loading from "@components/Loading";
 import { useAuth } from "@utils/Auth/AuthContext";
 import styles from "./Styles/Page_ManageEmployees.module.css";
@@ -12,6 +13,8 @@ const ManageEmployees = () => {
     const [activeTab, setActiveTab] = useState("Employees");
     const [employees, setEmployees] = useState([]);
     const [roles, setRoles] = useState([]);
+
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
 
     useEffect(() => {
         if (loading && !currentCompany) return;
@@ -30,18 +33,35 @@ const ManageEmployees = () => {
             console.log("Error deleting employee");
         }
     };
-    const handleUpdateEmployee = async (updatedEmployee) => {
+    const handleUpdateEmployee = async (updatedCompEmpData, roleIds, rolesChanged) => {
         try {
-            // const res = axios.put(`/company/${currentCompany._id}/employees/${updatedEmployee._id}`, updatedEmployee);
-            // setEmployees(() => {
-            //     const exists = employees.some((emp) => emp._id === updatedEmployee._id);
-            //     return exists ? employees.filter((emp) => emp._id !== updatedEmployee._id) : employees;
-            // });
+            let payload = {
+                updatedEmployee: updatedCompEmpData,
+            };
+            if (rolesChanged) {
+                payload.updatedRoleIds = roleIds;
+            }
+            const res = await axios.patch(`/company/${currentCompany._id}/employees/${updatedCompEmpData._id}`, payload);
+
+            const { _id, companyID, employeeID, ...compEmpDataSanitized } = res.data.companyEmployee;
+
+            setEmployees((prevEmp) =>
+                prevEmp.map((emp) => {
+                    if (emp._id === updatedCompEmpData._id) {
+                        return {
+                            ...emp,
+                            ...compEmpDataSanitized,
+                            roles: rolesChanged ? res.data.roles : emp.roles,
+                        };
+                    } else {
+                        return emp;
+                    }
+                })
+            );
         } catch (error) {
-            console.log("Error updating employee");
+            console.error("Error updating employee:", error.response?.data?.message || error.message);
         }
     };
-
     const getEmployees = async () => {
         try {
             const res = await axios.get(`/company/${currentCompany._id}/employees`);
@@ -82,14 +102,18 @@ const ManageEmployees = () => {
             <Navbar navBarLabel={"Admin Panel"} activeTab={activeTab} onTabChange={setActiveTab} />
             <div className={styles.container}>
                 <div className={styles.left}>
-                    {employees.map((emp) => (
-                        <Employee
-                            key={emp._id}
-                            userData={emp}
-                            handleUpdateEmployee={handleUpdateEmployee}
-                            handleFireEmployee={handleFireEmployee}
-                        />
-                    ))}
+                    <div className={styles.items}>
+                        {employees.map((emp) => (
+                            <Employee
+                                key={emp._id}
+                                userData={emp}
+                                roles={roles.filter((role) => role.name !== "Owner")}
+                                onViewClick={() => {
+                                    setSelectedEmployee(emp);
+                                }}
+                            />
+                        ))}
+                    </div>
                 </div>
                 <div className={styles.right}>
                     <AddEmployeeForm
@@ -100,6 +124,16 @@ const ManageEmployees = () => {
                     />
                 </div>
             </div>
+
+            {selectedEmployee && (
+                <EditEmployeeModal
+                    userData={selectedEmployee}
+                    allRoles={roles.filter((role) => role.name !== "Owner")}
+                    closeModal={() => setSelectedEmployee(null)}
+                    handleUpdateEmployee={handleUpdateEmployee}
+                    handleFireEmployee={handleFireEmployee}
+                />
+            )}
         </>
     );
 };
